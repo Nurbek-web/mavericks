@@ -62,36 +62,36 @@ public class RobotHardware {
 
     FtcDashboard dashboard = FtcDashboard.getInstance();
 
+    // Dead Wheels
     public WEncoder podLeft;
     public WEncoder podRight;
     public WEncoder podFront;
 
     public DcMotorEx intakeMotor;
 
-    public DcMotorEx hangLeftMotor;
-
-    public DcMotorEx hangRightMotor;
 
     public WServo droneTrigger;
 
+    // hang
     public Servo hangLeftServo;
-
     public Servo hangRightServo;
+    public DcMotorEx hangLeftMotor;
+    public DcMotorEx hangRightMotor;
 
+    // Outtake
     public Servo upLeft;
-
     public Servo upRight;
-
     public Servo upBack;
-
     public Servo upFront;
-
     public Servo downLeft;
+
+
 
     public Servo intakeServo;
 
     public CRServoImplEx intakeRoller;
 
+    // lift motor
     public DcMotorEx liftMotor;
 
     private HardwareMap hardwareMap;

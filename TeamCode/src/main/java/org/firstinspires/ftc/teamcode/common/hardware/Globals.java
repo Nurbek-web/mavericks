@@ -28,7 +28,7 @@ public class Globals {
         THIRD
     }
 
-    public static LiftLevel liftRaised = LiftLevel.FIRST;
+    public static LiftLevel liftLevel = LiftLevel.FIRST;
 
     public static void startIntaking() {
         IS_INTAKING = IntakeState.INTAKING;
@@ -48,5 +48,11 @@ public class Globals {
 
     public static void raiseIntake() {
         INTAKE_LOWERED = false;
+    }
+
+    public static boolean outtakeClosed = false;
+    public static void closeOuttake(){ outtakeClosed = true; }
+    public static void changeLiftLevel(LiftLevel lev){
+        liftLevel = lev;
     }
 }

@@ -28,10 +28,18 @@ public class MeepMeepTesting {
 
         RoadRunnerBotEntity myBot;
 
+
+
         switch (ROUTE) {
             case RED_NEAR:
                 myBot = redNear(meepMeep);
                 break;
+//            case RED_FAR:
+//                break;
+//            case BLUE_NEAR:
+//                break;
+//            case BLUE_FAR:
+//                break;
 
             default:
                 throw new Error("Initializition problem");
@@ -61,9 +69,16 @@ public class MeepMeepTesting {
                 .setConstraints(MAX_VEL, MAX_ACCEL, Math.toRadians(180), Math.toRadians(180), 15)
                 .build();
 
-        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(10, -60, Math.toRadians(90)))
-                .setTangent(0)
-                .splineToSplineHeading(new Pose2d(42, -34, 0), Math.PI / 2)
+        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(12, 60, Math.toRadians(270)))
+
+                  .lineToY(34)
+                                .waitSeconds(0.4)
+                                .turn(Math.toRadians(-90))
+                                .lineToX(50)
+
+//                                .lineToXLinearHeading(50, Math.toRadians(90))
+//                                .waitSeconds(1)
+//                .splineTo(new Vector2d(42, -34), Math.PI / 2)
                 .build());
 
         return myBot;

@@ -1,6 +1,9 @@
 package com.example.meepmeeptesting;
 
+import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.SequentialAction;
+import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.noahbres.meepmeep.MeepMeep;
 import com.noahbres.meepmeep.roadrunner.DefaultBotBuilder;
@@ -69,17 +72,51 @@ public class MeepMeepTesting {
                 .setConstraints(MAX_VEL, MAX_ACCEL, Math.toRadians(180), Math.toRadians(180), 15)
                 .build();
 
-        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(12, 60, Math.toRadians(270)))
 
-                  .lineToY(34)
-                                .waitSeconds(0.4)
-                                .turn(Math.toRadians(-90))
-                                .lineToX(50)
+        Action trajStart = myBot.getDrive().actionBuilder(new Pose2d(12, 60, Math.toRadians(270)))
+                .lineToY(34)
+//                .waitSeconds(0.4)
+//                .turn(Math.toRadians(-90))
+//                .lineToX(50)
+                .build();
+        int propPosition = 2;
+        TrajectoryActionBuilder trajPropBuilder = myBot.getDrive().
+                actionBuilder(new Pose2d(12, 34, Math.toRadians(270)));
+        Action trajProp, reverseTrajProp;
+        switch(propPosition){
+            case 0: // left
+                trajProp = trajPropBuilder.turn(-Math.PI/2).build();
+                reverseTrajProp = myBot.getDrive().
+                        actionBuilder(new Pose2d(12, 34, Math.toRadians(180))).
+                        turn(Math.toRadians(-90)).build();
+                break;
+            case 1: // center
+                trajProp = trajPropBuilder.turn(Math.PI).build();
+                reverseTrajProp = myBot.getDrive().
+                        actionBuilder(new Pose2d(12, 34, Math.toRadians(90)))
+                        .turn(Math.toRadians(0)).build();
+                break;
+            case 2: // right
+                trajProp = trajPropBuilder.turn(Math.PI/2).build();
+                reverseTrajProp = myBot.getDrive().
+                        actionBuilder(new Pose2d(12, 34, 0.0)).
+                        turn(-Math.toRadians(-90)).build();
+                break;
+            default:
+                throw new Error("Unknown team prop position");
+        }
+        Action trajGoToBackdrop = myBot.getDrive().actionBuilder(new Pose2d(12, 34, Math.toRadians(90)))
+                .splineTo(new Vector2d(25, 47), 0)
+                .splineTo(new Vector2d(50, 33), 0)
+                .build();
+        myBot.runAction(new SequentialAction(
+    trajStart,
+                trajProp,
 
-//                                .lineToXLinearHeading(50, Math.toRadians(90))
-//                                .waitSeconds(1)
-//                .splineTo(new Vector2d(42, -34), Math.PI / 2)
-                .build());
+                // servo action
+                reverseTrajProp,
+                trajGoToBackdrop
+        ));
 
         return myBot;
     }

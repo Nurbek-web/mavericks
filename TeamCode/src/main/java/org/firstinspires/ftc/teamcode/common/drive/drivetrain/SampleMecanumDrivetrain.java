@@ -59,6 +59,22 @@ public class SampleMecanumDrivetrain {
         setDrivePowers(bLeftPow, fLeftPow, bRightPow, fRightPow);
     }
 
+    public void driveFieldCentric(double y, double x, double rx, double botHeading) {
+        // Rotate the movement direction counter to the bot's rotation
+        double rotX = x * Math.cos(-botHeading) - y * Math.sin(-botHeading);
+        double rotY = x * Math.sin(-botHeading) + y * Math.cos(-botHeading);
+
+        rotX = rotX * 1.1;  // Counteract imperfect strafing
+
+        double denominator = Math.max(Math.abs(rotY) + Math.abs(rotX) + Math.abs(rx), 1);
+        double frontLeftPower = (rotY + rotX + rx) / denominator;
+        double backLeftPower = (rotY - rotX + rx) / denominator;
+        double frontRightPower = (rotY - rotX - rx) / denominator;
+        double backRightPower = (rotY + rotX - rx) / denominator;
+
+        setDrivePowers(backLeftPower, frontLeftPower, backRightPower, frontRightPower);
+    }
+
     public void setDrivePowers(double bLeftPow, double fLeftPow, double bRightPow, double fRightPow) {
         robot.dtBackLeftMotor.setPower(bLeftPow);
         robot.dtFrontLeftMotor.setPower(fLeftPow);

@@ -102,7 +102,20 @@ public class Solo extends CommandOpMode {
                             telemetry.addLine("hangopen");
                         })
                 );
-
+        gamepadEx2.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
+                .whenPressed(
+                        new InstantCommand(() -> {
+                            lift.liftFirstLevel();
+                            telemetry.addLine("liftFirstLevel");
+                        })
+                );
+        gamepadEx2.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
+                .whenPressed(
+                        new InstantCommand(() -> {
+                            lift.liftzero();
+                            telemetry.addLine("liftFirstLevel");
+                        })
+                );
 
 
 
@@ -162,7 +175,8 @@ public class Solo extends CommandOpMode {
 //                ), 0
 //        );
 
-        robot.drivetrain.driveFieldCentric(-gamepad1.left_stick_y, gamepad1.left_stick_x * 1.1, gamepad1.right_stick_x, robot.getAngle());
+//        robot.drivetrain.driveFieldCentric(-gamepad1.left_stick_y, gamepad1.left_stick_x * 1.1, gamepad1.right_stick_x, robot.getAngle());
+        robot.drivetrain.driveRobotCentric(-gamepad1.left_stick_y, gamepad1.left_stick_x * 1.1, gamepad1.right_stick_x);
         telemetry.addData("left_stick_y", -gamepad1.left_stick_y);
         telemetry.addData("left_stick_x", gamepad1.left_stick_x);
         telemetry.addData("right_stick_x", gamepad1.right_stick_x);
@@ -171,6 +185,8 @@ public class Solo extends CommandOpMode {
         // add if statement
         robot.hangLeftMotor.setPower(gamepad2.left_trigger);
         robot.hangLeftMotor.setPower(gamepad2.right_trigger);
+
+        robot.liftMotor.setPower(gamepad2.left_stick_y);
 
         double loop = System.nanoTime();
         telemetry.addData("hz ", 1000000000 / (loop - loopTime));

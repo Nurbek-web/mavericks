@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.common.subsystem;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.teamcode.common.hardware.Globals;
@@ -17,16 +18,19 @@ public class    LiftSubsystem extends SubsystemBase {
 
     // lift the system
     public void liftzero(){
-        robot.liftMotor.setTargetPosition(-robot.liftMotor.getCurrentPosition()); // 0
-        robot.liftMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        robot.liftMotor.setVelocity(200);
+//        robot.liftMotor.setTargetPosition(-robot.liftMotor.getCurrentPosition()); // 0
+//        robot.liftMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+//        robot.liftMotor.setVelocity(200);
+          robot.liftMotor.setPower(0);
     }
     public void liftFirstLevel(){
+        robot.liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.liftMotor.setTargetPosition(liftLevel1); // 700
         robot.liftMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         robot.liftMotor.setVelocity(200);
     }
     public void liftSecondLevel(){
+        robot.liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         robot.liftMotor.setTargetPosition(liftLevel2); // 1400
         robot.liftMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
         robot.liftMotor.setVelocity(200);

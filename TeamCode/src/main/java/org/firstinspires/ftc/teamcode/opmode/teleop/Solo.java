@@ -149,6 +149,10 @@ public class Solo extends CommandOpMode {
         robot.periodic();
         robot.write();
 
+        if (gamepad1.options) {
+            robot.resetIMU();
+        }
+
 //        // G1 - Drivetrain Control
 //        robot.drivetrain.set(
 //                new Pose(
@@ -158,7 +162,7 @@ public class Solo extends CommandOpMode {
 //                ), 0
 //        );
 
-        robot.drivetrain.driveFieldCentric(-gamepad1.left_stick_y, gamepad1.left_stick_x * 1.1, gamepad1.right_stick_x, robot.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
+        robot.drivetrain.driveFieldCentric(-gamepad1.left_stick_y, gamepad1.left_stick_x * 1.1, gamepad1.right_stick_x, robot.getAngle());
         telemetry.addData("left_stick_y", -gamepad1.left_stick_y);
         telemetry.addData("left_stick_x", gamepad1.left_stick_x);
         telemetry.addData("right_stick_x", gamepad1.right_stick_x);

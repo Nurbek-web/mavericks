@@ -30,6 +30,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 import org.firstinspires.ftc.teamcode.common.drive.drivetrain.MecanumDrivetrain;
 import org.firstinspires.ftc.teamcode.common.drive.drivetrain.SampleMecanumDrivetrain;
 import org.firstinspires.ftc.teamcode.common.drive.localizer.AprilTagLocalizer;
@@ -270,16 +271,16 @@ public class RobotHardware {
         imuThread = new Thread(() -> {
             while (!opMode.isStopRequested()) {
                 synchronized (imuLock) {
-                    imuAngle = AngleUnit.normalizeRadians(imu.getAngularOrientation().firstAngle + startOffset);
+                    imuAngle = AngleUnit.normalizeRadians(imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS) + startOffset);
                 }
             }
         });
         imuThread.start();
     }
 
-    public double getAngle() {
-        return AngleUnit.normalizeRadians(imuAngle - imuOffset);
-    }
+//    public double getAngle() {
+//        return AngleUnit.normalizeRadians(imuAngle - imuOffset);
+//    }
 
     public void reset() {
         for (WSubsystem subsystem : subsystems) {
@@ -287,6 +288,14 @@ public class RobotHardware {
         }
 
         imuOffset = imuAngle;
+    }
+
+    public double getAngle () {
+        return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+    }
+
+    public void resetIMU() {
+        imu.resetYaw();
     }
 
     public void setStartOffset(double off) {

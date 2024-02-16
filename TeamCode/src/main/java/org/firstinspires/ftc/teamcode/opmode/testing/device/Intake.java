@@ -15,22 +15,19 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
+
 @Config
 @TeleOp(name = "IntakeTest")
 public class Intake extends OpMode {
-    public DcMotorEx intakeMotor;
+    private final RobotHardware robot = RobotHardware.getInstance();
+
 
     private GamepadEx gamepadEx;
     private GamepadEx gamepadEx2;
-    private Servo intakeServo;
-
     @Override
     public void init() {
-        intakeMotor = hardwareMap.get(DcMotorEx.class, "intakeMotor");
-//        liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        intakeMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER); // Reset the motor encoder
-        intakeServo = hardwareMap.get(Servo.class, "intakeServo");
-
+        robot.init(hardwareMap);
         gamepadEx = new GamepadEx(gamepad1);
         gamepadEx2 = new GamepadEx(gamepad2);
 
@@ -64,25 +61,26 @@ public class Intake extends OpMode {
 //            liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 //            liftMotor.setPower(0.5);
 //        }
+        robot.drivetrain.driveRobotCentric(-gamepad1.left_stick_y, gamepad1.left_stick_x * 1.1, gamepad1.right_stick_x);
 
-        if (gamepadEx.wasJustPressed(GamepadKeys.Button.Y)) {
-            intakeMotor.setPower(1);
+        if (gamepad1.a) {
+            robot.intakeMotor.setPower(1);
         }
 
-        if (gamepadEx.wasJustPressed(GamepadKeys.Button.B)) {
-            intakeMotor.setPower(0);
+        if (gamepad1.b) {
+            robot.intakeMotor.setPower(0);
         }
 
-        if (gamepadEx.wasJustPressed(GamepadKeys.Button.X)) {
-            intakeMotor.setPower(-1);
+        if (gamepad1.x) {
+            robot.intakeMotor.setPower(-1);
         }
 
-        if (gamepadEx.wasJustPressed(GamepadKeys.Button.RIGHT_BUMPER)) {
-            intakeServo.setPosition(-0.1);
+        if (gamepad1.left_bumper) {
+            robot.intakeServo.setPosition(0.1);
         }
 
-        if (gamepadEx.wasJustPressed(GamepadKeys.Button.LEFT_BUMPER)) {
-            intakeServo.setPosition(0.65);
+        if (gamepad1.right_bumper) {
+            robot.intakeServo.setPosition(0.9);
         }
 
 

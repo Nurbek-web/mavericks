@@ -16,21 +16,16 @@ import com.qualcomm.robotcore.hardware.Servo;
 @Config
 @TeleOp(name = "LiftTest")
 public class LiftTest extends OpMode {
-    private PIDController controller;
     public DcMotorEx liftMotor;
 
     private GamepadEx gamepadEx;
     private GamepadEx gamepadEx2;
 
-    public static int target = 0;
-    private final double ticks_in_degree = 700/180.0;
-
-
+    public static int TARGET = 0;
+    public static double POWER = 0.5;
     private final int lFirstLevelPos = 1400;
     private final int lSecondLevelPos = 700;
     private final int lDownPos = 0;
-    private static double power = 0.5;
-
     private static double upRightPos = 0;
     private static double upBackPos = 0;
     private static double upFrontPos = 0;
@@ -38,9 +33,14 @@ public class LiftTest extends OpMode {
 
 
     public Servo upRight;
-    public Servo upBack;
+    public Servo holdPixel;
     public Servo upFront;
     public Servo downLeft;
+    public Servo upLeft;
+
+    public static double LOW_POS = 0;
+    public static double HIGH_POS = 1;
+
     @Override
     public void init() {
         liftMotor = hardwareMap.get(DcMotorEx.class, "liftMotor");
@@ -49,11 +49,14 @@ public class LiftTest extends OpMode {
         liftMotor.setTargetPosition(lDownPos);
         liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION); // Turn the motor back on when we are done
 
-
+        this.upLeft = hardwareMap.get(Servo.class, "upLeft");
         this.upRight = hardwareMap.get(Servo.class, "upRight");
-        this.upBack = hardwareMap.get(Servo.class, "upBack");
+        this.holdPixel = hardwareMap.get(Servo.class, "upBack");
         this.upFront = hardwareMap.get(Servo.class, "upFront");
         this.downLeft = hardwareMap.get(Servo.class, "downLeft");
+
+        upRight.setDirection(Servo.Direction.REVERSE);
+        upLeft.setDirection(Servo.Direction.FORWARD);
 
         gamepadEx = new GamepadEx(gamepad1);
         gamepadEx2 = new GamepadEx(gamepad2);
@@ -66,43 +69,24 @@ public class LiftTest extends OpMode {
     public void loop() {
         int liftPos = liftMotor.getCurrentPosition();
 
-//        if (gamepad1.a) {
-//            liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
-//            telemetry.addLine("button B pressed");
-//            liftMotor.setTargetPosition(lFirstLevelPos);
-//            liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//            liftMotor.setPower(0.5);
-//        }
-//
-//        if (gamepad1.b) {
-//            liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
-//            telemetry.addLine("button A pressed");
-//            liftMotor.setTargetPosition(lDownPos);
-//            liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//            liftMotor.setPower(0.5);
-//        }
-//
-//        if (gamepad1.y) {
-//            liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
-//            telemetry.addLine("button Y pressed");
-//            liftMotor.setTargetPosition(-1000);
-//            liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//            liftMotor.setPower(0.5);
-//        }
+        liftMotor.setTargetPosition(TARGET);
+        liftMotor.setPower(POWER);
 
-        upRight.setPosition(upRightPos);
-        upBack.setPosition(upBackPos);
-        upFront.setPosition(upFrontPos);
-        downLeft.setPosition(downLeftPos);
-
-
-        liftMotor.setTargetPosition(target);
-        liftMotor.setPower(power);
-
-//        if (gamepadEx.wasJustPressed(GamepadKeys.Button.Y)) {
-//            liftMotor.setTargetPosition(lDownPos);
-//            liftMotor.setPower(0.5);
-//        }
+        if (gamepad1.a) {
+            upRight.setPosition(HIGH_POS);
+        }
+        if (gamepad1.b) {
+            upLeft.setPosition(HIGH_POS);
+        }
+        if (gamepad1.y) {
+            downLeft.setPosition(HIGH_POS);
+        }
+        if (gamepad1.right_bumper) {
+            upFront.setPosition(HIGH_POS);
+        }
+        if (gamepad1.left_bumper) {
+            holdPixel.setPosition(LOW_POS);
+        }
 
         // Get the current position of the armMotor
         double position = liftMotor.getCurrentPosition();
@@ -113,7 +97,7 @@ public class LiftTest extends OpMode {
         // Show the position of the armMotor on telemetry
         telemetry.addData("Encoder Position", position);
 
-        telemetry.addData("power", power);
+        telemetry.addData("power", POWER);
 
         // Show the target position of the armMotor on telemetry
         telemetry.addData("Desired Position", desiredPosition);

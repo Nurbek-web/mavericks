@@ -120,32 +120,32 @@ public class MeepMeepTesting {
 
 
         TrajectoryActionBuilder trajStart, trajBackdrop;
-        int propPosition = 2;
+            int propPosition = 2;
 
-        switch(propPosition){
-            case 0: // right
-                trajStart = myBot.getDrive().actionBuilder(new Pose2d(-34, 60, Math.toRadians(90)))
-                        .strafeToLinearHeading(new Vector2d(-36, 34), Math.toRadians(0));
-                trajBackdrop = myBot.getDrive().actionBuilder(new Pose2d(-36, 34, Math.toRadians(0)))
-                        .strafeToConstantHeading(new Vector2d(12, 34)).strafeToLinearHeading(new Vector2d(48, 33), Math.toRadians(180));
-                break;
-            case 1: // center
-                trajStart = myBot.getDrive().actionBuilder(new Pose2d(-34, 60, Math.toRadians(90)))
-                        .strafeToConstantHeading(new Vector2d(-34, 34));
-                trajBackdrop = myBot.getDrive().actionBuilder(new Pose2d(-34, 34, Math.toRadians(90)))
-                        .strafeToConstantHeading(new Vector2d(12, 34)).strafeToSplineHeading(new Vector2d(48, 33), Math.toRadians(180));
-                break;
-            case 2: // left
-                trajStart = myBot.getDrive().actionBuilder(new Pose2d(-34, 60, Math.toRadians(90)))
-                        .lineToY(46).strafeToLinearHeading(new Vector2d(-34, 30), Math.toRadians(180));
-                trajBackdrop = myBot.getDrive().actionBuilder(new Pose2d(-34, 30, Math.toRadians(180)))
-                        .strafeToConstantHeading(new Vector2d(-34, 58))
-                        .strafeToConstantHeading(new Vector2d(12, 58))
-                        .strafeToConstantHeading(new Vector2d(48, 33));
-                break;
-            default:
-                throw new Error("Unknown team prop position");
-        }
+            switch(propPosition){
+                case 0: // right
+                    trajStart = myBot.getDrive().actionBuilder(new Pose2d(-34, 60, Math.toRadians(90)))
+                            .strafeToLinearHeading(new Vector2d(-36, 34), Math.toRadians(0));
+                    trajBackdrop = myBot.getDrive().actionBuilder(new Pose2d(-36, 34, Math.toRadians(0)))
+                            .strafeToConstantHeading(new Vector2d(12, 34)).strafeToLinearHeading(new Vector2d(48, 33), Math.toRadians(180));
+                    break;
+                case 1: // center
+                    trajStart = myBot.getDrive().actionBuilder(new Pose2d(-34, 60, Math.toRadians(90)))
+                            .strafeToConstantHeading(new Vector2d(-34, 34));
+                    trajBackdrop = myBot.getDrive().actionBuilder(new Pose2d(-34, 34, Math.toRadians(90)))
+                            .strafeToConstantHeading(new Vector2d(12, 34)).strafeToSplineHeading(new Vector2d(48, 33), Math.toRadians(180));
+                    break;
+                case 2: // left
+                    trajStart = myBot.getDrive().actionBuilder(new Pose2d(-34, 60, Math.toRadians(90)))
+                            .lineToY(46).strafeToLinearHeading(new Vector2d(-34, 30), Math.toRadians(180));
+                    trajBackdrop = myBot.getDrive().actionBuilder(new Pose2d(-34, 30, Math.toRadians(180)))
+                            .strafeToConstantHeading(new Vector2d(-34, 58))
+                            .strafeToConstantHeading(new Vector2d(12, 58))
+                            .strafeToConstantHeading(new Vector2d(48, 33));
+                    break;
+                default:
+                    throw new Error("Unknown team prop position");
+            }
 
         myBot.runAction(new SequentialAction(
                 trajStart.build(),

@@ -90,7 +90,7 @@ public class PropPipeline implements VisionProcessor {
         }
 
         Imgproc.blur(leftZone, leftZone, new Size(5, 5));
-        Imgproc.blur(centerZone, centerZone, new Size(5, 5));
+            Imgproc.blur(centerZone, centerZone, new Size(5, 5));
 
         left = Core.mean(leftZone);
         center = Core.mean(centerZone);

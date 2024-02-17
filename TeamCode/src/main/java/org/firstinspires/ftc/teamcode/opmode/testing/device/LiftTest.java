@@ -13,10 +13,14 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
+
 @Config
 @TeleOp(name = "LiftTest")
 public class LiftTest extends OpMode {
-    public DcMotorEx liftMotor;
+    private final RobotHardware robot = RobotHardware.getInstance();
+
+
 
     private GamepadEx gamepadEx;
     private GamepadEx gamepadEx2;
@@ -32,34 +36,21 @@ public class LiftTest extends OpMode {
     private static double downLeftPos = 0;
 
 
-    public Servo upRight;
-    public Servo holdPixel;
-    public Servo upFront;
-    public Servo downLeft;
-    public Servo upLeft;
-
     public static double LOW_POS = 0;
     public static double HIGH_POS = 1;
 
     @Override
     public void init() {
-        liftMotor = hardwareMap.get(DcMotorEx.class, "liftMotor");
-//        liftMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
-        liftMotor.setTargetPosition(lDownPos);
-        liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION); // Turn the motor back on when we are done
+        robot.init(hardwareMap);
 
-        this.upLeft = hardwareMap.get(Servo.class, "upLeft");
-        this.upRight = hardwareMap.get(Servo.class, "upRight");
-        this.holdPixel = hardwareMap.get(Servo.class, "upBack");
-        this.upFront = hardwareMap.get(Servo.class, "upFront");
-        this.downLeft = hardwareMap.get(Servo.class, "downLeft");
-
-        upRight.setDirection(Servo.Direction.REVERSE);
-        upLeft.setDirection(Servo.Direction.FORWARD);
+        robot.upRight.setDirection(Servo.Direction.REVERSE);
+        robot.upLeft.setDirection(Servo.Direction.FORWARD);
 
         gamepadEx = new GamepadEx(gamepad1);
         gamepadEx2 = new GamepadEx(gamepad2);
+
+        robot.liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.liftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
@@ -67,32 +58,51 @@ public class LiftTest extends OpMode {
 
     @Override
     public void loop() {
-        int liftPos = liftMotor.getCurrentPosition();
+        robot.liftMotor.setTargetPosition(TARGET);
+        robot.liftMotor.setPower(POWER);
 
-        liftMotor.setTargetPosition(TARGET);
-        liftMotor.setPower(POWER);
-
-        if (gamepad1.a) {
-            upRight.setPosition(HIGH_POS);
-        }
-        if (gamepad1.b) {
-            upLeft.setPosition(HIGH_POS);
-        }
-        if (gamepad1.y) {
-            downLeft.setPosition(HIGH_POS);
-        }
-        if (gamepad1.right_bumper) {
-            upFront.setPosition(HIGH_POS);
+        if (gamepad1.right_bumper) { // upFront = 0; (opened)
+            robot.upFront.setPosition(HIGH_POS); // upFront = 0.535 (closed)
         }
         if (gamepad1.left_bumper) {
-            holdPixel.setPosition(LOW_POS);
+            robot.upBack.setPosition(LOW_POS);
         }
 
+        if (gamepad2.right_bumper) { // down
+            robot.upRight.setPosition(0.8);
+            robot.upLeft.setPosition(0.47);
+        }
+
+        if (gamepad2.left_bumper) { // up
+            robot.upRight.setPosition(0);
+            robot.upLeft.setPosition(1);
+        }
+
+//        if (gamepad1.a){
+////        robot.liftMotor.setTargetPosition(-robot.liftMotor.getCurrentPosition()); // 0
+////        robot.liftMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+////        robot.liftMotor.setVelocity(200);
+//            robot.liftMotor.setPower(0);
+////          sleep(100);
+//        }
+//        if (gamepad1.b) {
+//            robot.liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//            robot.liftMotor.setTargetPosition(liftLevel1); // 700
+//            robot.liftMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+//            robot.liftMotor.setVelocity(200);
+//        }
+//        if (gamepad1.x){
+//            robot.liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//            robot.liftMotor.setTargetPosition(liftLevel2); // 1400
+//            robot.liftMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+//            robot.liftMotor.setVelocity(200);
+//        }
+
         // Get the current position of the armMotor
-        double position = liftMotor.getCurrentPosition();
+        double position = robot.liftMotor.getCurrentPosition();
 
         // Get the target position of the armMotor
-        double desiredPosition = liftMotor.getTargetPosition();
+        double desiredPosition = robot.liftMotor.getTargetPosition();
 
         // Show the position of the armMotor on telemetry
         telemetry.addData("Encoder Position", position);
@@ -101,6 +111,12 @@ public class LiftTest extends OpMode {
 
         // Show the target position of the armMotor on telemetry
         telemetry.addData("Desired Position", desiredPosition);
+
+//        telemetry.addData("upRight: ", robot.upRight.get);
+//        telemetry.addData("downLeft: ", robot.downLeft.getPosition());
+//        telemetry.addData("upBack: ", robot.upBack.getPosition());
+//        telemetry.addData("upFront: ", robot.upFront.getPosition());
+//        telemetry.addData("upBack: ", robot.upBack.getPosition());
 
         telemetry.update();
     }

@@ -22,9 +22,11 @@ import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
 public class Intake extends OpMode {
     private final RobotHardware robot = RobotHardware.getInstance();
 
-
     private GamepadEx gamepadEx;
     private GamepadEx gamepadEx2;
+
+    public static double lowPos = 0.1;
+    public static double highPos = 0.9;
     @Override
     public void init() {
         robot.init(hardwareMap);
@@ -37,30 +39,6 @@ public class Intake extends OpMode {
 
     @Override
     public void loop() {
-
-//        if (gamepad1.a) {
-//            liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
-//            telemetry.addLine("button B pressed");
-//            liftMotor.setTargetPosition(lFirstLevelPos);
-//            liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//            liftMotor.setPower(0.5);
-//        }
-//
-//        if (gamepad1.b) {
-//            liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
-//            telemetry.addLine("button A pressed");
-//            liftMotor.setTargetPosition(lDownPos);
-//            liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//            liftMotor.setPower(0.5);
-//        }
-//
-//        if (gamepad1.y) {
-//            liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER); // Reset the motor encoder
-//            telemetry.addLine("button Y pressed");
-//            liftMotor.setTargetPosition(-1000);
-//            liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-//            liftMotor.setPower(0.5);
-//        }
         robot.drivetrain.driveRobotCentric(-gamepad1.left_stick_y, gamepad1.left_stick_x * 1.1, gamepad1.right_stick_x);
 
         if (gamepad1.a) {
@@ -76,12 +54,13 @@ public class Intake extends OpMode {
         }
 
         if (gamepad1.left_bumper) {
-            robot.intakeServo.setPosition(0.1);
+            robot.intakeServo.setPosition(lowPos);
         }
 
         if (gamepad1.right_bumper) {
-            robot.intakeServo.setPosition(0.9);
+            robot.intakeServo.setPosition(highPos);
         }
+
 
 
 

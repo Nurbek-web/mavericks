@@ -17,7 +17,7 @@ enum Route {
 }
 
 public class MeepMeepTesting {
-    public static final Route ROUTE = Route.BLUE_NEAR;
+    public static final Route ROUTE = Route.RED_FAR;
 
     public static final double DELAY = 0.5;
     public static final double MAX_VEL = 60;
@@ -90,7 +90,8 @@ public class MeepMeepTesting {
                         .actionBuilder(new Pose2d(12, 60, Math.toRadians(90)))
                         .strafeToConstantHeading(new Vector2d(10, 34));
                 trajBackdrop = myBot.getDrive().actionBuilder(new Pose2d(10, 34, Math.toRadians(90)))
-                        .strafeToConstantHeading(new Vector2d(20, 33)).strafeToLinearHeading(new Vector2d(48, 33), Math.toRadians(180));
+                        .strafeToConstantHeading(new Vector2d(20, 33))
+                        .strafeToLinearHeading(new Vector2d(48, 33), Math.toRadians(180));
 
                 break;
             case 2: // left
@@ -98,16 +99,28 @@ public class MeepMeepTesting {
                         .actionBuilder(new Pose2d(12, 60, Math.toRadians(90)))
                         .strafeToLinearHeading(new Vector2d(14, 34), Math.toRadians(180));
                 trajBackdrop = myBot.getDrive().actionBuilder(new Pose2d(14, 34, Math.toRadians(180)))
-                        .strafeToLinearHeading(new Vector2d(20, 45), Math.toRadians(135)).strafeToLinearHeading(new Vector2d(48, 33), Math.toRadians(180));
+                        .strafeToLinearHeading(new Vector2d(20, 45), Math.toRadians(135))
+                        .strafeToLinearHeading(new Vector2d(48, 33), Math.toRadians(180));
 
                 break;
             default:
                 throw new Error("Unknown team prop position");
         }
 
+        TrajectoryActionBuilder fTraj = myBot.getDrive().actionBuilder(new Pose2d(48, 33, Math.PI))
+                        .strafeToConstantHeading(new Vector2d(12, 60))
+                        .strafeToConstantHeading(new Vector2d(-48, 60))
+                .strafeToConstantHeading(new Vector2d(-55, 34));
+        TrajectoryActionBuilder fTrajEnd = myBot.getDrive().actionBuilder(new Pose2d(-55, 34, Math.PI))
+                        .strafeToConstantHeading(new Vector2d(-48, 60))
+                        .strafeToConstantHeading(new Vector2d(12, 60))
+                        .strafeToConstantHeading(new Vector2d(48, 33));
+
         myBot.runAction(new SequentialAction(
                 trajStart.build(),
-                trajBackdrop.build()
+                trajBackdrop.build(),
+                fTraj.build(),
+                fTrajEnd.build()
         ));
 
         return myBot;
@@ -152,9 +165,20 @@ public class MeepMeepTesting {
                 throw new Error("Unknown team prop position");
         }
 
+        TrajectoryActionBuilder fTraj = myBot.getDrive().actionBuilder(new Pose2d(48, 33, Math.PI))
+                .strafeToConstantHeading(new Vector2d(12, 60))
+                .strafeToConstantHeading(new Vector2d(-48, 60))
+                .strafeToConstantHeading(new Vector2d(-55, 34));
+        TrajectoryActionBuilder fTrajEnd = myBot.getDrive().actionBuilder(new Pose2d(-55, 34, Math.PI))
+                .strafeToConstantHeading(new Vector2d(-48, 60))
+                .strafeToConstantHeading(new Vector2d(12, 60))
+                .strafeToConstantHeading(new Vector2d(48, 33));
+
         myBot.runAction(new SequentialAction(
                 trajStart.build(),
-                trajBackdrop.build()
+                trajBackdrop.build(),
+                fTraj.build(),
+                fTrajEnd.build()
         ));
 
         return myBot;
@@ -199,9 +223,20 @@ public class MeepMeepTesting {
                 throw new Error("Unknown team prop position");
         }
 
+        TrajectoryActionBuilder fTraj = myBot.getDrive().actionBuilder(new Pose2d(48, -33, Math.PI))
+                .strafeToConstantHeading(new Vector2d(12, -60))
+                .strafeToConstantHeading(new Vector2d(-48, -60))
+                .strafeToConstantHeading(new Vector2d(-55, -34));
+        TrajectoryActionBuilder fTrajEnd = myBot.getDrive().actionBuilder(new Pose2d(-55, -34, Math.PI))
+                .strafeToConstantHeading(new Vector2d(-48, -60))
+                .strafeToConstantHeading(new Vector2d(12, -60))
+                .strafeToConstantHeading(new Vector2d(48, -33));
+
         myBot.runAction(new SequentialAction(
                 trajStart.build(),
-                trajBackdrop.build()
+                trajBackdrop.build(),
+                fTraj.build(),
+                fTrajEnd.build()
         ));
 
         return myBot;
@@ -246,9 +281,20 @@ public class MeepMeepTesting {
                 throw new Error("Unknown team prop position");
         }
 
+        TrajectoryActionBuilder fTraj = myBot.getDrive().actionBuilder(new Pose2d(48, -33, Math.PI))
+                .strafeToConstantHeading(new Vector2d(12, -60))
+                .strafeToConstantHeading(new Vector2d(-48, -60))
+                .strafeToConstantHeading(new Vector2d(-55, -34));
+        TrajectoryActionBuilder fTrajEnd = myBot.getDrive().actionBuilder(new Pose2d(-55, -34, Math.PI))
+                .strafeToConstantHeading(new Vector2d(-48, -60))
+                .strafeToConstantHeading(new Vector2d(12, -60))
+                .strafeToConstantHeading(new Vector2d(48, -33));
+
         myBot.runAction(new SequentialAction(
                 trajStart.build(),
-                trajBackdrop.build()
+                trajBackdrop.build(),
+                fTraj.build(),
+                fTrajEnd.build()
         ));
 
         return myBot;

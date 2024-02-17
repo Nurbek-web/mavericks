@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.tuning;
 
+import android.util.Size;
+
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
@@ -8,19 +10,55 @@ import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.TankDrive;
+import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
+import org.firstinspires.ftc.teamcode.common.vision.Location;
+import org.firstinspires.ftc.teamcode.common.vision.PropPipeline;
+import org.firstinspires.ftc.vision.VisionPortal;
 
 public final class SplineTest extends LinearOpMode {
+
+    RobotHardware robot;
+    PropPipeline propPipeline;
+    VisionPortal portal;
+    Location randomization;
+
     @Override
     public void runOpMode() throws InterruptedException {
         Pose2d beginPose = new Pose2d(-34, 60, Math.toRadians(90));
+        robot = RobotHardware.getInstance();
+        propPipeline = new PropPipeline();
+        portal = new VisionPortal.Builder()
+                .setCamera(hardwareMap.get(WebcamName.class, "Webcam"))
+                .setCameraResolution(new Size(1280, 720))
+                .addProcessor(propPipeline)
+                .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
+                .enableLiveView(true)
+                .setAutoStopLiveView(true)
+                .build();
+
+        while (robot.getCameraState() != VisionPortal.CameraState.STREAMING && portal.getCameraState() != VisionPortal.CameraState.STREAMING) {
+            telemetry.addLine("initializing... please wait");
+            telemetry.update();
+        }
+
+        while (opModeInInit()) {
+            telemetry.addLine("ready");
+            telemetry.addData("position", propPipeline.getLocation());
+            telemetry.update();
+        }
+
+        randomization = propPipeline.getLocation();
+        portal.close();
         if (TuningOpModes.DRIVE_CLASS.equals(MecanumDrive.class)) {
             MecanumDrive drive = new MecanumDrive(hardwareMap, beginPose);
 
             waitForStart();
 
-            blueFar(drive);
+
+            blueFar(drive, randomization);
 
         } else {
             throw new RuntimeException();
@@ -75,13 +113,13 @@ public final class SplineTest extends LinearOpMode {
 
     }
 
-    private static void blueFar(MecanumDrive drive) {
+    private static void blueFar(MecanumDrive drive, Location loc) {
 
         TrajectoryActionBuilder trajStart, trajBackdrop;
         int propPosition = 2;
 
-        switch(propPosition){
-            case 0: // right
+        switch(loc){
+            case RIGHT: // right
                 trajStart = drive.actionBuilder(new Pose2d(-34, 60, Math.toRadians(90)))
                         .strafeToLinearHeading(new Vector2d(-38, 45), Math.toRadians(45))
                         .strafeToLinearHeading(new Vector2d(-36, 34), Math.toRadians(0));
@@ -90,7 +128,7 @@ public final class SplineTest extends LinearOpMode {
                         .strafeToConstantHeading(new Vector2d(12, 60))
                         .strafeToLinearHeading(new Vector2d(48, 33), Math.toRadians(180));
                 break;
-            case 1: // center
+            case CENTER: // center
                 trajStart = drive.actionBuilder(new Pose2d(-34, 60, Math.toRadians(90)))
                         .strafeToConstantHeading(new Vector2d(-34, 34));
                 trajBackdrop = drive.actionBuilder(new Pose2d(-34, 34, Math.toRadians(90)))
@@ -98,7 +136,7 @@ public final class SplineTest extends LinearOpMode {
                         .strafeToConstantHeading(new Vector2d(12, 60))
                         .strafeToLinearHeading(new Vector2d(48, 33), Math.toRadians(180));
                 break;
-            case 2: // left
+            case LEFT: // left
                 trajStart = drive.actionBuilder(new Pose2d(-34, 60, Math.toRadians(90)))
                         .lineToY(46).strafeToLinearHeading(new Vector2d(-34, 30), Math.toRadians(180));
                 trajBackdrop = drive.actionBuilder(new Pose2d(-34, 30, Math.toRadians(180)))

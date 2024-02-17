@@ -8,6 +8,7 @@ import com.arcrobotics.ftclib.command.InstantCommand;
 import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.common.centerstage.ClawSide;
@@ -162,9 +163,9 @@ public class Solo extends CommandOpMode {
         robot.periodic();
         robot.write();
 
-        if (gamepad1.options) {
-            robot.resetIMU();
-        }
+//        if (gamepad1.options) {
+//            robot.resetIMU();
+//        }
 
 //        // G1 - Drivetrain Control
 //        robot.drivetrain.set(
@@ -186,7 +187,12 @@ public class Solo extends CommandOpMode {
         robot.hangLeftMotor.setPower(gamepad2.left_trigger);
         robot.hangLeftMotor.setPower(gamepad2.right_trigger);
 
-        robot.liftMotor.setPower(gamepad2.left_stick_y);
+//        if (gamepad2.left_stick_y != 0.0) {
+//            robot.liftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//            robot.liftMotor.setPower(gamepad2.left_stick_y);
+//        }
+
+        telemetry.addData("left_stick_y", gamepad2.left_stick_y);
 
         double loop = System.nanoTime();
         telemetry.addData("hz ", 1000000000 / (loop - loopTime));

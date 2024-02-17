@@ -46,7 +46,6 @@ public class SampleMecanumDrivetrain {
 
     // Drive or Strafe to at some power while turning to some angle.
     public void driveRobotCentric(double y, double x, double rx) {
-        // https://gm0.org/en/latest/docs/software/tutorials/mecanum-drive.html#field-centric
         double fRightPow, bRightPow, fLeftPow, bLeftPow;
 
         // Do the math found in GM0

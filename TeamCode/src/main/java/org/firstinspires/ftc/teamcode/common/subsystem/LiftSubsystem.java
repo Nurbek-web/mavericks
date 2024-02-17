@@ -22,6 +22,7 @@ public class    LiftSubsystem extends SubsystemBase {
 //        robot.liftMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 //        robot.liftMotor.setVelocity(200);
           robot.liftMotor.setPower(0);
+//          sleep(100);
     }
     public void liftFirstLevel(){
         robot.liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);

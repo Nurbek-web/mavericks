@@ -290,13 +290,13 @@ public class RobotHardware {
         imuOffset = imuAngle;
     }
 
-    public double getAngle () {
-        return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
-    }
+//    public double getAngle () {
+//        return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+//    }
 
-    public void resetIMU() {
-        imu.resetYaw();
-    }
+//    public void resetIMU() {
+//        imu.resetYaw();
+//    }
 
     public void setStartOffset(double off) {
         startOffset = off;

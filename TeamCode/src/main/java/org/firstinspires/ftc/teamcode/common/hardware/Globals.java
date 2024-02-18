@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.common.hardware;
 
 import org.firstinspires.ftc.teamcode.common.vision.Location;
+import org.firstinspires.ftc.teamcode.opmode.testing.device.Hang;
 
 public class Globals {
 
@@ -22,13 +23,22 @@ public class Globals {
     public static IntakeState IS_INTAKING = IntakeState.NOT_WORKING;
     public static boolean INTAKE_LOWERED = false;
 
+
     public enum LiftLevel {
         FIRST,
         SECOND,
         THIRD
     }
 
+    public enum HangServoState {
+        OPENED,
+        CLOSED,
+        REVERSE
+    }
+
     public static LiftLevel liftLevel = LiftLevel.FIRST;
+
+    public static HangServoState HangServoOpened = HangServoState.CLOSED;
 
     public static void startIntaking() {
         IS_INTAKING = IntakeState.INTAKING;
@@ -49,6 +59,7 @@ public class Globals {
     public static void raiseIntake() {
         INTAKE_LOWERED = false;
     }
+
 
     public static boolean outtakeClosed = false;
     public static void closeOuttake(){ outtakeClosed = true; }

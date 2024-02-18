@@ -37,13 +37,19 @@ public class LiftSubsystem extends SubsystemBase {
 //        robot.liftMotor.setVelocity(200);
 //    }
 
-    public void extendOuttake() {
+    public void extend2Outtake() {
         // down
         this.robot.upRight.setPosition(0);
         this.robot.upLeft.setPosition(0.8);
 
     }
 
+    public void extend1Outtake() {
+        // down
+        this.robot.upRight.setPosition(0.2);
+        this.robot.upLeft.setPosition(0.7);
+
+    }
     public void intendOuttake() {
         // up
         this.robot.upRight.setPosition(0.8);

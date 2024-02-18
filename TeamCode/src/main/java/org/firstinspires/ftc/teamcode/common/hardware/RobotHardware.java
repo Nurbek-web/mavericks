@@ -362,7 +362,49 @@ public class RobotHardware {
         return null;
     }
 
-    public void closeCamera() {
+//    public Pose getAprilTagPosition() {
+//        if (aprilTag != null && localizer != null) {
+//            List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+//
+//            List<Pose> backdropPositions = new ArrayList<>();
+//            for (AprilTagDetection detection : currentDetections) {
+//                if (detection.metadata != null) {
+//                    switch (detection.id) {
+//                        case 1:
+//                        case 4:
+//                            backdropPositions.add(new Pose(detection.ftcPose).add(new Pose(6, 0, 0)));
+//                            break;
+//                        case 2:
+//                        case 5:
+//                            backdropPositions.add(new Pose(detection.ftcPose));
+//                            break;
+//                        case 3:
+//                        case 6:
+//                            backdropPositions.add(new Pose(detection.ftcPose).subt(new Pose(6, 0, 0)));
+//                            break;
+//                        default:
+//                            break;
+//                    }
+//                }
+//            }
+//
+//            Pose backdropPosition = backdropPositions.stream().reduce(Pose::add).orElse(new Pose());
+//            backdropPosition = backdropPosition.divide(new Pose(backdropPositions.size(), backdropPositions.size(), backdropPositions.size()));
+//
+//
+//            Pose globalTagPosition = localizer.getPose().x > 0 ?
+//                    AprilTagLocalizer.convertBlueBackdropPoseToGlobal(backdropPosition) :
+//                    AprilTagLocalizer.convertRedBackdropPoseToGlobal(backdropPosition);
+//
+//            if (Double.isNaN(globalTagPosition.x) || Double.isNaN(globalTagPosition.y) || Double.isNaN(globalTagPosition.heading)) return null;
+//            return globalTagPosition;
+//        } else {
+//            return null;
+//        }
+//    }
+
+
+                            public void closeCamera() {
         if (visionPortal != null) visionPortal.close();
     }
 

@@ -9,6 +9,7 @@ import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.common.centerstage.ClawSide;
@@ -37,7 +38,7 @@ public class Solo extends CommandOpMode {
     private boolean lastJoystickUp = false;
     private boolean lastJoystickDown = false;
 
-    private boolean extendIntake = true;
+    private boolean extendOuttake = true, outtakeClosed=false;
 
 
     IntakeSubsystem intake;
@@ -55,8 +56,12 @@ public class Solo extends CommandOpMode {
         gamepadEx2 = new GamepadEx(gamepad2);
 
         robot.init(hardwareMap);
+        lift.openOuttake();
+        lift.intendOuttake();
 
         intake = new IntakeSubsystem();
+        lift = new LiftSubsystem();
+        hang = new HangSubsystem();
 
         // G1 - Intake Control
         gamepadEx.getGamepadButton(GamepadKeys.Button.B)
@@ -96,27 +101,51 @@ public class Solo extends CommandOpMode {
                         })
                 );
 
-        gamepadEx2.getGamepadButton(GamepadKeys.Button.A)
+        gamepadEx2.getGamepadButton(GamepadKeys.Button.A) // hang
                 .whenPressed(
                         new InstantCommand(() -> {
                             hang.openHang();
                             telemetry.addLine("hangopen");
                         })
                 );
-        gamepadEx2.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
-                .whenPressed(
-                        new InstantCommand(() -> {
-                            lift.liftFirstLevel();
-                            telemetry.addLine("liftFirstLevel");
-                        })
-                );
-        gamepadEx2.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
-                .whenPressed(
-                        new InstantCommand(() -> {
-                            lift.liftzero();
-                            telemetry.addLine("liftFirstLevel");
-                        })
-                );
+
+        gamepadEx2.getGamepadButton(GamepadKeys.Button.X).whenPressed( // closeOuttake
+                new InstantCommand(() -> {
+                    if(outtakeClosed){
+                        lift.openOuttake();
+                    }else{
+                        lift.closeOuttake();
+                    }
+                    outtakeClosed = !outtakeClosed;
+                })
+        );
+        gamepadEx2.getGamepadButton(GamepadKeys.Button.Y).whenPressed( // extendOuttake
+                new InstantCommand(() -> {
+                    if(extendOuttake){
+                        lift.extendOuttake();
+                    }else{
+                        lift.intendOuttake();
+                    }
+                    extendOuttake = !extendOuttake;
+                })
+        );
+
+
+
+        //        gamepadEx2.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
+//                .whenPressed(
+//                        new InstantCommand(() -> {
+//                            lift.liftFirstLevel();
+//                            telemetry.addLine("liftFirstLevel");
+//                        })
+//                );
+//        gamepadEx2.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
+//                .whenPressed(
+//                        new InstantCommand(() -> {
+//                            lift.liftzero();
+//                            telemetry.addLine("liftFirstLevel");
+//                        })
+//                );
 
 
 
@@ -148,6 +177,9 @@ public class Solo extends CommandOpMode {
 //        gamepadEx.getGamepadButton(GamepadKeys.Button.X)
 //                .whenPressed(() -> CommandScheduler.getInstance().schedule(new InstantCommand(() -> extendIntake = !extendIntake)));
 
+        // MOTOR CONFIG
+        robot.liftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+
         robot.read();
         while (opModeInInit()) {
             telemetry.addLine("Robot Initialized.");
@@ -163,9 +195,11 @@ public class Solo extends CommandOpMode {
         robot.periodic();
         robot.write();
 
-//        if (gamepad1.options) {
-//            robot.resetIMU();
-//        }
+        robot.liftMotor.setPower(gamepad2.left_stick_y);
+
+        if (gamepad1.options) {
+            robot.resetIMU();
+        }
 
 //        // G1 - Drivetrain Control
 //        robot.drivetrain.set(
@@ -176,7 +210,7 @@ public class Solo extends CommandOpMode {
 //                ), 0
 //        );
 
-//        robot.drivetrain.driveFieldCentric(-gamepad1.left_stick_y, gamepad1.left_stick_x * 1.1, gamepad1.right_stick_x, robot.getAngle());
+//        robot.drivetrain.driveFieldCentric(-gamepad1.left_stick_y, gamepad1.left_stick_x * 1.1, gamepad1.right_stick_x, robot.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
         robot.drivetrain.driveRobotCentric(-gamepad1.left_stick_y, gamepad1.left_stick_x * 1.1, gamepad1.right_stick_x);
         telemetry.addData("left_stick_y", -gamepad1.left_stick_y);
         telemetry.addData("left_stick_x", gamepad1.left_stick_x);

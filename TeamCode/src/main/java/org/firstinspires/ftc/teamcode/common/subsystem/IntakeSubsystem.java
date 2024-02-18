@@ -36,14 +36,14 @@ public class IntakeSubsystem extends SubsystemBase {
         if(Globals.INTAKE_LOWERED){
             return;
         }
-        this.robot.intakeServo.setPosition(0.65);
+        this.robot.intakeServo.setPosition(0.34);
         Globals.lowerIntake();
     }
     public void raiseServo(){
         if(!Globals.INTAKE_LOWERED){
             return;
         }
-        this.robot.intakeServo.setPosition(-0.1);
+        this.robot.intakeServo.setPosition(0.8);
         Globals.raiseIntake();
     }
 

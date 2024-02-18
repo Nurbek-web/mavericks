@@ -172,8 +172,7 @@ public class RobotHardware {
         intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         this.liftMotor = hardwareMap.get(DcMotorEx.class, "liftMotor");
-        this.liftMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        this.liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        liftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         this.hangLeftMotor = hardwareMap.get(DcMotorEx.class, "hangLeftMotor");
         hangLeftMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
@@ -193,6 +192,10 @@ public class RobotHardware {
         this.upFront = hardwareMap.get(Servo.class, "upFront");
         this.downLeft = hardwareMap.get(Servo.class, "downLeft");
 
+        upRight.setDirection(Servo.Direction.REVERSE);
+        upLeft.setDirection(Servo.Direction.FORWARD);
+
+
         this.hangLeftServo = hardwareMap.get(Servo.class, "hangLeftServo");
         this.hangRightServo = hardwareMap.get(Servo.class, "hangRightServo");
 
@@ -200,13 +203,13 @@ public class RobotHardware {
         this.intakeRoller = hardwareMap.get(CRServoImplEx.class, "intakeRoller");
 
         // Retrieve the IMU from the hardware map
-        IMU imu = hardwareMap.get(IMU.class, "imu");
+        this.imu = hardwareMap.get(IMU.class, "imu");
         // Adjust the orientation parameters to match your robot
         IMU.Parameters parameters = new IMU.Parameters(new RevHubOrientationOnRobot(
                 RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
                 RevHubOrientationOnRobot.UsbFacingDirection.UP));
         // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
-        imu.initialize(parameters);
+        this.imu.initialize(parameters);
 
 //        this.droneTrigger = new WServo(hardwareMap.get(Servo.class, "drone"));
 
@@ -290,13 +293,13 @@ public class RobotHardware {
         imuOffset = imuAngle;
     }
 
-//    public double getAngle () {
-//        return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
-//    }
+    public double getAngle () {
+        return imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+    }
 
-//    public void resetIMU() {
-//        imu.resetYaw();
-//    }
+    public void resetIMU() {
+        imu.resetYaw();
+    }
 
     public void setStartOffset(double off) {
         startOffset = off;

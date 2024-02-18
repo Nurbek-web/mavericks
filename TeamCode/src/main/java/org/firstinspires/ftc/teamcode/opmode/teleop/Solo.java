@@ -56,12 +56,15 @@ public class Solo extends CommandOpMode {
         gamepadEx2 = new GamepadEx(gamepad2);
 
         robot.init(hardwareMap);
-        lift.openOuttake();
-        lift.intendOuttake();
 
         intake = new IntakeSubsystem();
         lift = new LiftSubsystem();
         hang = new HangSubsystem();
+
+        lift.openOuttake();
+        lift.intendOuttake();
+        hang.closeServo();
+        robot.droneTrigger.setPosition(0.57);
 
         // G1 - Intake Control
         gamepadEx.getGamepadButton(GamepadKeys.Button.B)
@@ -89,32 +92,35 @@ public class Solo extends CommandOpMode {
                                     intake.stopIntake();
                                     telemetry.addLine("stopIntake");
                                 }),
-                                () -> Globals.IntakeState.INTAKING
+                                () -> Globals.IS_INTAKING != Globals.IntakeState.INTAKING
                         )
                 );
 
         gamepadEx.getGamepadButton(GamepadKeys.Button.Y)
                 .whenPressed(
-                        new InstantCommand(() -> {
-                            intake.stopIntake();
-                            telemetry.addLine("stopIntake");
-                        })
-                );
-        gamepadEx.getGamepadButton(GamepadKeys.Button.A)
-                .whenPressed(
-                        new InstantCommand(() -> {
-                            intake.releaseExtra();
-                            telemetry.addLine("releaseExtra");
-                        })
+                        new ConditionalCommand(
+                                new InstantCommand(() -> {
+                                    intake.releaseExtra();
+                                    telemetry.addLine("stopIntake");
+                                }),
+                                new InstantCommand(() -> {
+                                    intake.stopIntake();
+                                    telemetry.addLine("stopIntake");
+                                }),
+                                () -> Globals.IS_INTAKING != Globals.IntakeState.REVERSE
+                        )
                 );
 
-        gamepadEx2.getGamepadButton(GamepadKeys.Button.A) // hang
-                .whenPressed(
-                        new InstantCommand(() -> {
-                            hang.openHang();
-                            telemetry.addLine("hangopen");
-                        })
-                );
+        gamepadEx.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenPressed( // closeOuttake
+                new InstantCommand(() -> {
+                    if(outtakeClosed){
+                        lift.openOuttake();
+                    }else{
+                        lift.closeOuttake();
+                    }
+                    outtakeClosed = !outtakeClosed;
+                })
+        );
 
         gamepadEx2.getGamepadButton(GamepadKeys.Button.X).whenPressed( // closeOuttake
                 new InstantCommand(() -> {
@@ -129,7 +135,7 @@ public class Solo extends CommandOpMode {
         gamepadEx2.getGamepadButton(GamepadKeys.Button.Y).whenPressed( // extendOuttake
                 new InstantCommand(() -> {
                     if(extendOuttake){
-                        lift.extendOuttake();
+                        lift.extend1Outtake();
                     }else{
                         lift.intendOuttake();
                     }
@@ -137,52 +143,32 @@ public class Solo extends CommandOpMode {
                 })
         );
 
+        gamepadEx2.getGamepadButton(GamepadKeys.Button.B).whenPressed( // extendOuttake
+                new InstantCommand(() -> {
+                    if(extendOuttake){
+                        lift.extend2Outtake();
+                    }else{
+                        lift.intendOuttake();
+                    }
+                    extendOuttake = !extendOuttake;
+                })
+        );
 
-
-        //        gamepadEx2.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
-//                .whenPressed(
-//                        new InstantCommand(() -> {
-//                            lift.liftFirstLevel();
-//                            telemetry.addLine("liftFirstLevel");
-//                        })
-//                );
-//        gamepadEx2.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER)
-//                .whenPressed(
-//                        new InstantCommand(() -> {
-//                            lift.liftzero();
-//                            telemetry.addLine("liftFirstLevel");
-//                        })
-//                );
-
-
-
-//         G1 - Retract deposit
-//        gamepadEx.getGamepadButton(GamepadKeys.Button.B)
-//                .whenPressed(
-//                        new ConditionalCommand(
-//                                new DepositRetractionCommand(),
-//                                new InstantCommand(() -> CommandScheduler.getInstance().schedule(new DepositExtendCommand())),
-//                                () -> Globals.IS_SCORING
-//                        )
-//                );
-
-        // G1 - Claw control for scoring, retraction for when intaking
-//        gamepadEx.getGamepadButton(GamepadKeys.Button.A)
-//                .whenPressed(
-//                        () -> CommandScheduler.getInstance().schedule(
-//                                new ConditionalCommand(
-//                                        new ClawDepositCommand(),
-//                                        new ConditionalCommand(
-//                                                new IntakeRetractCommand(),
-//                                                new IntakeExtendCommand(extendIntake ? 500 : 100),
-//                                                () -> Globals.IS_INTAKING
-//                                        ),
-//                                        () -> Globals.IS_SCORING
-//                                ))
-//                );
-//
-//        gamepadEx.getGamepadButton(GamepadKeys.Button.X)
-//                .whenPressed(() -> CommandScheduler.getInstance().schedule(new InstantCommand(() -> extendIntake = !extendIntake)));
+        gamepadEx2.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenPressed( // extendOuttake
+                new InstantCommand(() -> {
+                    hang.openServo();
+                })
+        );
+        gamepadEx2.getGamepadButton(GamepadKeys.Button.DPAD_LEFT).whenPressed( // extendOuttake
+                new InstantCommand(() -> {
+                    hang.reverseMotors();
+                })
+        );
+        gamepadEx2.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whenPressed( // extendOuttake
+                new InstantCommand(() -> {
+                    robot.droneTrigger.setPosition(0.8);
+                })
+        );
 
         // MOTOR CONFIG
         robot.liftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -225,13 +211,14 @@ public class Solo extends CommandOpMode {
 
 
         // add if statement
-        robot.hangLeftMotor.setPower(gamepad2.left_trigger);
-        robot.hangLeftMotor.setPower(gamepad2.right_trigger);
-
-//        if (gamepad2.left_stick_y != 0.0) {
-//            robot.liftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-//            robot.liftMotor.setPower(gamepad2.left_stick_y);
-//        }
+        if (Globals.HangServoOpened == Globals.HangServoState.OPENED) {
+            robot.hangLeftMotor.setPower(gamepad2.left_trigger);
+            robot.hangRightMotor.setPower(gamepad2.right_trigger);
+        }
+        if (Globals.HangServoOpened == Globals.HangServoState.REVERSE) {
+            robot.hangLeftMotor.setPower(-gamepad2.left_trigger);
+            robot.hangRightMotor.setPower(-gamepad2.right_trigger);
+        }
 
         telemetry.addData("left_stick_y", gamepad2.left_stick_y);
 

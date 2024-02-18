@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.common.subsystem;
 
 import com.arcrobotics.ftclib.command.SubsystemBase;
 
+import org.firstinspires.ftc.teamcode.common.hardware.Globals;
 import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
 import org.firstinspires.ftc.teamcode.common.util.wrappers.WSubsystem;
 
@@ -22,17 +23,18 @@ public class HangSubsystem extends SubsystemBase {
         this.robot.hangRightMotor.setPower(0.8);
     }
 
-    public void openHang() {
-        this.robot.hangLeftServo.setPosition(0.5);
-        this.robot.hangRightServo.setPosition(0.5);
-        curhangState = HangState.ACTIVE;
+    public void openServo() {
+        robot.hangLeftServo.setPosition(1);
+        robot.hangRightServo.setPosition(0.8);
+        Globals.HangServoOpened = Globals.HangServoState.OPENED;
     }
 
-
-    public void unhang(){
-        this.robot.hangLeftServo.setPosition(.5);
-        this.robot.hangRightServo.setPosition(1);
-        curhangState = HangState.DISABLED;
+    public void closeServo() {
+        robot.hangLeftServo.setPosition(0.6);
+        robot.hangRightServo.setPosition(0.3);
     }
 
+    public void reverseMotors() {
+        Globals.HangServoOpened = Globals.HangServoState.REVERSE;
+    }
 }

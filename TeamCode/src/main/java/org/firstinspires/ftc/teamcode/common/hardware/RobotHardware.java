@@ -73,7 +73,7 @@ public class RobotHardware {
     public DcMotorEx intakeMotor;
 
 
-    public WServo droneTrigger;
+    public Servo droneTrigger;
 
     // hang
     public Servo hangLeftServo;
@@ -87,6 +87,7 @@ public class RobotHardware {
     public Servo upBack;
     public Servo upFront;
     public Servo downLeft;
+    public Servo autoServo;
 
 
 
@@ -169,7 +170,7 @@ public class RobotHardware {
 
         this.intakeMotor = hardwareMap.get(DcMotorEx.class, "intakeMotor");
         intakeMotor.setZeroPowerBehavior(DcMotorEx.ZeroPowerBehavior.BRAKE);
-        intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        intakeMotor.setDirection(DcMotorSimple.Direction.FORWARD);
 
         this.liftMotor = hardwareMap.get(DcMotorEx.class, "liftMotor");
         liftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
@@ -191,7 +192,10 @@ public class RobotHardware {
         this.upBack = hardwareMap.get(Servo.class, "upBack");
         this.upFront = hardwareMap.get(Servo.class, "upFront");
         this.downLeft = hardwareMap.get(Servo.class, "downLeft");
+        this.autoServo = hardwareMap.get(Servo.class, "autoServo");
+        this.droneTrigger = hardwareMap.get(Servo.class,"droneTrigger");
 
+        autoServo.setPosition(1);
         upRight.setDirection(Servo.Direction.REVERSE);
         upLeft.setDirection(Servo.Direction.FORWARD);
 
@@ -211,7 +215,6 @@ public class RobotHardware {
         // Without this, the REV Hub's orientation is assumed to be logo up / USB forward
         this.imu.initialize(parameters);
 
-//        this.droneTrigger = new WServo(hardwareMap.get(Servo.class, "drone"));
 
         modules = hardwareMap.getAll(LynxModule.class);
 
@@ -313,6 +316,10 @@ public class RobotHardware {
         this.subsystems.addAll(Arrays.asList(subsystems));
     }
 
+
+    public void dropPixel() {
+        autoServo.setPosition(0.68);
+    }
 
     public double getVoltage() {
         return voltage;

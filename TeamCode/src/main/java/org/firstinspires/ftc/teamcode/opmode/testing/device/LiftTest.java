@@ -31,23 +31,10 @@ public class LiftTest extends OpMode {
     private final int lFirstLevelPos = 1400;
     private final int lSecondLevelPos = 700;
     private final int lDownPos = 0;
-    private static double upRightPos = 0;
-    private static double upBackPos = 0;
-    private static double upFrontPos = 0;
-    private static double downLeftPos = 0;
-
     LiftSubsystem lift;
 
-
-    public static double LOW_POS = 0;
-    public static double HIGH_POS = 1;
-
-    public static double upRightPower = 0.8;
-    public static double upLeftPower = 0.47;
-    public static double upLeftPowerZero = 1;
-    public static double upRightPowerZero = 0;
-    public static double closeOuttakePos = 0.535;
-    public static double openOuttakePos = 0;
+    public static double UP_LEFT = 0;
+    public static double UP_RIGHT = 1;
 
     boolean openPixel = true;
 
@@ -55,12 +42,8 @@ public class LiftTest extends OpMode {
     public void init() {
         robot.init(hardwareMap);
 
-        robot.upRight.setDirection(Servo.Direction.REVERSE);
-        robot.upLeft.setDirection(Servo.Direction.FORWARD);
-
         gamepadEx = new GamepadEx(gamepad1);
         gamepadEx2 = new GamepadEx(gamepad2);
-
 
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
@@ -73,10 +56,8 @@ public class LiftTest extends OpMode {
         robot.liftMotor.setPower(POWER);
 
         if (gamepad1.right_bumper) { // upFront = 0; (opened)
-            robot.upLeft.setPosition(HIGH_POS); // upFront = 0.535 (closed)
-        }
-        if (gamepad1.left_bumper) {
-            robot.upRight.setPosition(LOW_POS);
+            robot.upLeft.setPosition(UP_LEFT); // upFront = 0.535 (closed)
+            robot.upRight.setPosition(UP_RIGHT);
         }
 
 //        if (gamepad2.right_bumper) { // down

@@ -78,12 +78,19 @@ public class Solo extends CommandOpMode {
                 ));
 
         // G1 - Intake Roll Control
-        gamepadEx.getGamepadButton(GamepadKeys.Button.X)
+        gamepadEx.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
                 .whenPressed(
-                        new InstantCommand(() -> {
-                            intake.runIntake();
-                            telemetry.addLine("runIntake");
-                        })
+                        new ConditionalCommand(
+                                new InstantCommand(() -> {
+                                    intake.runIntake();
+                                    telemetry.addLine("stopIntake");
+                                }),
+                                new InstantCommand(() -> {
+                                    intake.stopIntake();
+                                    telemetry.addLine("stopIntake");
+                                }),
+                                () -> Globals.IntakeState.INTAKING
+                        )
                 );
 
         gamepadEx.getGamepadButton(GamepadKeys.Button.Y)
@@ -149,7 +156,7 @@ public class Solo extends CommandOpMode {
 
 
 
-        // G1 - Retract deposit
+//         G1 - Retract deposit
 //        gamepadEx.getGamepadButton(GamepadKeys.Button.B)
 //                .whenPressed(
 //                        new ConditionalCommand(

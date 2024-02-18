@@ -13,6 +13,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.TankDrive;
+import org.firstinspires.ftc.teamcode.common.hardware.Globals;
 import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
 import org.firstinspires.ftc.teamcode.common.vision.Location;
 import org.firstinspires.ftc.teamcode.common.vision.PropPipeline;
@@ -30,6 +31,8 @@ public final class SplineTest extends LinearOpMode {
         Pose2d beginPose = new Pose2d(-34, 60, Math.toRadians(90));
         robot = RobotHardware.getInstance();
         propPipeline = new PropPipeline();
+        Globals.ALLIANCE = Location.BLUE;
+        Globals.SIDE = Location.FAR;
         portal = new VisionPortal.Builder()
                 .setCamera(hardwareMap.get(WebcamName.class, "webka"))
                 .setCameraResolution(new Size(1280, 720))
@@ -39,10 +42,10 @@ public final class SplineTest extends LinearOpMode {
                 .setAutoStopLiveView(true)
                 .build();
 
-        while (robot.getCameraState() != VisionPortal.CameraState.STREAMING && portal.getCameraState() != VisionPortal.CameraState.STREAMING) {
-            telemetry.addLine("initializing... please wait");
-            telemetry.update();
-        }
+//        while (robot.getCameraState() != VisionPortal.CameraState.STREAMING && portal.getCameraState() != VisionPortal.CameraState.STREAMING) {
+//            telemetry.addLine("initializing... please wait");
+//            telemetry.update();
+//        }
 
         while (opModeInInit()) {
             telemetry.addLine("ready");
@@ -118,7 +121,6 @@ public final class SplineTest extends LinearOpMode {
     private static void blueFar(MecanumDrive drive, Location loc) {
 
         TrajectoryActionBuilder trajStart, trajBackdrop;
-        int propPosition = 2;
 
         switch(loc){
             case RIGHT: // right

@@ -56,8 +56,8 @@ public class Solo extends CommandOpMode {
         gamepadEx2 = new GamepadEx(gamepad2);
 
         robot.init(hardwareMap);
-        lift.openOuttake();
-        lift.intendOuttake();
+//        lift.openOuttake();
+//        lift.intendOuttake();
 
         intake = new IntakeSubsystem();
         lift = new LiftSubsystem();
@@ -80,16 +80,10 @@ public class Solo extends CommandOpMode {
         // G1 - Intake Roll Control
         gamepadEx.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
                 .whenPressed(
-                        new ConditionalCommand(
-                                new InstantCommand(() -> {
+                        new InstantCommand(() -> {
                                     intake.runIntake();
                                     telemetry.addLine("stopIntake");
-                                }),
-                                new InstantCommand(() -> {
-                                    intake.stopIntake();
-                                    telemetry.addLine("stopIntake");
-                                }),
-                                () -> Globals.IntakeState.INTAKING
+                                )},
                         )
                 );
 
@@ -139,7 +133,7 @@ public class Solo extends CommandOpMode {
 
 
 
-        //        gamepadEx2.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
+//                gamepadEx2.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
 //                .whenPressed(
 //                        new InstantCommand(() -> {
 //                            lift.liftFirstLevel();

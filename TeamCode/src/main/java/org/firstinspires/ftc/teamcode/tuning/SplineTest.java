@@ -31,7 +31,7 @@ public final class SplineTest extends LinearOpMode {
         robot = RobotHardware.getInstance();
         propPipeline = new PropPipeline();
         portal = new VisionPortal.Builder()
-                .setCamera(hardwareMap.get(WebcamName.class, "Webcam"))
+                .setCamera(hardwareMap.get(WebcamName.class, "webka"))
                 .setCameraResolution(new Size(1280, 720))
                 .addProcessor(propPipeline)
                 .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
@@ -57,7 +57,6 @@ public final class SplineTest extends LinearOpMode {
 
             waitForStart();
 
-
             blueFar(drive, randomization);
 
         } else {
@@ -66,49 +65,52 @@ public final class SplineTest extends LinearOpMode {
     }
 
     private static void blueNear(MecanumDrive drive) {
-        Action trajStart = drive.actionBuilder(new Pose2d(12, 60, Math.toRadians(270)))
-                .lineToY(34)
-//                .waitSeconds(0.4)
-//                .turn(Math.toRadians(-90))
-//                .lineToX(50)
-                .build();
+        TrajectoryActionBuilder trajBackdrop, trajStart;
         int propPosition = 2;
-        TrajectoryActionBuilder trajPropBuilder = drive.
-                actionBuilder(new Pose2d(12, 34, Math.toRadians(270)));
-        Action trajProp, reverseTrajProp;
         switch(propPosition){
-            case 0: // left
-                trajProp = trajPropBuilder.turn(-Math.PI/2).build();
-                reverseTrajProp = drive.
-                        actionBuilder(new Pose2d(12, 34, Math.toRadians(180))).
-                        turn(Math.toRadians(-90)).build();
+            case 0: // right
+                trajStart = drive
+                        .actionBuilder(new Pose2d(12, 60, Math.toRadians(90)))
+                        .strafeToLinearHeading(new Vector2d(10, 34), 0);
+                trajBackdrop = drive.actionBuilder(new Pose2d(10, 34, 0))
+                        .strafeToLinearHeading(new Vector2d(48, 33), Math.toRadians(180));
                 break;
             case 1: // center
-                trajProp = trajPropBuilder.turn(Math.PI).build();
-                reverseTrajProp = drive.
-                        actionBuilder(new Pose2d(12, 34, Math.toRadians(90)))
-                        .turn(Math.toRadians(0)).build();
+                trajStart = drive
+                        .actionBuilder(new Pose2d(12, 60, Math.toRadians(90)))
+                        .strafeToConstantHeading(new Vector2d(10, 34));
+                trajBackdrop = drive.actionBuilder(new Pose2d(10, 34, Math.toRadians(90)))
+                        .strafeToConstantHeading(new Vector2d(20, 33))
+                        .strafeToLinearHeading(new Vector2d(48, 33), Math.toRadians(180));
+
                 break;
-            case 2: // right
-                trajProp = trajPropBuilder.turn(Math.PI/2).build();
-                reverseTrajProp = drive.
-                        actionBuilder(new Pose2d(12, 34, 0.0)).
-                        turn(-Math.toRadians(-90)).build();
+            case 2: // left
+                trajStart = drive
+                        .actionBuilder(new Pose2d(12, 60, Math.toRadians(90)))
+                        .strafeToLinearHeading(new Vector2d(14, 34), Math.toRadians(180));
+                trajBackdrop = drive.actionBuilder(new Pose2d(14, 34, Math.toRadians(180)))
+                        .strafeToLinearHeading(new Vector2d(20, 45), Math.toRadians(135))
+                        .strafeToLinearHeading(new Vector2d(48, 33), Math.toRadians(180));
+
                 break;
             default:
                 throw new Error("Unknown team prop position");
         }
-        Action trajGoToBackdrop = drive.actionBuilder(new Pose2d(12, 34, Math.toRadians(90)))
-                .splineTo(new Vector2d(25, 47), 0)
-                .splineTo(new Vector2d(50, 33), 0)
-                .build();
-        Actions.runBlocking(new SequentialAction(
-                trajStart,
-                trajProp,
 
-                // servo action
-                reverseTrajProp,
-                trajGoToBackdrop
+        TrajectoryActionBuilder fTraj = drive.actionBuilder(new Pose2d(48, 33, Math.PI))
+                .strafeToConstantHeading(new Vector2d(12, 60))
+                .strafeToConstantHeading(new Vector2d(-48, 60))
+                .strafeToConstantHeading(new Vector2d(-55, 34));
+        TrajectoryActionBuilder fTrajEnd = drive.actionBuilder(new Pose2d(-55, 34, Math.PI))
+                .strafeToConstantHeading(new Vector2d(-48, 60))
+                .strafeToConstantHeading(new Vector2d(12, 60))
+                .strafeToConstantHeading(new Vector2d(48, 33));
+
+        Actions.runBlocking(new SequentialAction(
+                trajStart.build(),
+                trajBackdrop.build(),
+                fTraj.build(),
+                fTrajEnd.build()
         ));
 
     }
@@ -124,16 +126,16 @@ public final class SplineTest extends LinearOpMode {
                         .strafeToLinearHeading(new Vector2d(-38, 45), Math.toRadians(45))
                         .strafeToLinearHeading(new Vector2d(-36, 34), Math.toRadians(0));
                 trajBackdrop = drive.actionBuilder(new Pose2d(-36, 34, Math.toRadians(0)))
-                        .strafeToConstantHeading(new Vector2d(-34, 60))
-                        .strafeToConstantHeading(new Vector2d(12, 60))
+                        .strafeToConstantHeading(new Vector2d(-34, 58))
+                        .strafeToConstantHeading(new Vector2d(12, 58))
                         .strafeToLinearHeading(new Vector2d(48, 33), Math.toRadians(180));
                 break;
             case CENTER: // center
                 trajStart = drive.actionBuilder(new Pose2d(-34, 60, Math.toRadians(90)))
                         .strafeToConstantHeading(new Vector2d(-34, 34));
                 trajBackdrop = drive.actionBuilder(new Pose2d(-34, 34, Math.toRadians(90)))
-                        .strafeToConstantHeading(new Vector2d(-34, 60))
-                        .strafeToConstantHeading(new Vector2d(12, 60))
+                        .strafeToConstantHeading(new Vector2d(-34, 58))
+                        .strafeToConstantHeading(new Vector2d(12, 58))
                         .strafeToLinearHeading(new Vector2d(48, 33), Math.toRadians(180));
                 break;
             case LEFT: // left

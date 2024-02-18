@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import org.firstinspires.ftc.teamcode.common.hardware.Globals;
 import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
 
-public class    LiftSubsystem extends SubsystemBase {
+public class LiftSubsystem extends SubsystemBase {
 
     RobotHardware robot = RobotHardware.getInstance();
     private int liftLevel2=1400, liftLevel1=700;
@@ -17,39 +17,54 @@ public class    LiftSubsystem extends SubsystemBase {
     public LiftSubsystem(){}
 
     // lift the system
-    public void liftzero(){
-//        robot.liftMotor.setTargetPosition(-robot.liftMotor.getCurrentPosition()); // 0
+//    public void liftzero(){
+////        robot.liftMotor.setTargetPosition(-robot.liftMotor.getCurrentPosition()); // 0
+////        robot.liftMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+////        robot.liftMotor.setVelocity(200);
+//          robot.liftMotor.setPower(0);
+////          sleep(100);
+//    }
+//    public void liftFirstLevel(){
+//        robot.liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        robot.liftMotor.setTargetPosition(liftLevel1); // 700
 //        robot.liftMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 //        robot.liftMotor.setVelocity(200);
-          robot.liftMotor.setPower(0);
-//          sleep(100);
+//    }
+//    public void liftSecondLevel(){
+//        robot.liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        robot.liftMotor.setTargetPosition(liftLevel2); // 1400
+//        robot.liftMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
+//        robot.liftMotor.setVelocity(200);
+//    }
+
+    public void extendOuttake() {
+        // down
+        this.robot.upRight.setPosition(0);
+        this.robot.upLeft.setPosition(0.8);
+
     }
-    public void liftFirstLevel(){
-        robot.liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.liftMotor.setTargetPosition(liftLevel1); // 700
-        robot.liftMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        robot.liftMotor.setVelocity(200);
-    }
-    public void liftSecondLevel(){
-        robot.liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        robot.liftMotor.setTargetPosition(liftLevel2); // 1400
-        robot.liftMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-        robot.liftMotor.setVelocity(200);
+
+    public void intendOuttake() {
+        // up
+        this.robot.upRight.setPosition(0.8);
+        this.robot.upLeft.setPosition(0.47);
     }
 
     // holding pixels
-    public void closeOuttake(){
-        robot.upFront.setPosition(1); // or what should it be
+    public void closeOuttake()
+    {
+        this.robot.upFront.setPosition(0.535);
     }
     public void openOuttake(){
-        robot.upFront.setPosition(.5);
+        this.robot.upFront.setPosition(0);
     }
 
+
     public void haltPixel(){
-        robot.upBack.setPosition(.5);
+        this.robot.upBack.setPosition(.5);
     }
     public void unhaltPixel(){
-        robot.upBack.setPosition(0);
+        this.robot.upBack.setPosition(0);
     }
 
     // control lift position

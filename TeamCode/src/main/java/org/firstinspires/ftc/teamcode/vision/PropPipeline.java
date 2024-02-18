@@ -1,12 +1,13 @@
-package org.firstinspires.ftc.teamcode.common.vision;
+package org.firstinspires.ftc.teamcode.vision;
 
-import static org.firstinspires.ftc.teamcode.common.hardware.Globals.ALLIANCE;
-import static org.firstinspires.ftc.teamcode.common.hardware.Globals.SIDE;
+//import static org.firstinspires.ftc.teamcode.common.hardware.Globals.ALLIANCE;
+//import static org.firstinspires.ftc.teamcode.common.hardware.Globals.SIDE;
 
 import android.graphics.Canvas;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.internal.camera.calibration.CameraCalibration;
+import org.firstinspires.ftc.teamcode.vision.Location;
 import org.firstinspires.ftc.vision.VisionProcessor;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
@@ -71,7 +72,7 @@ public class PropPipeline implements VisionProcessor {
         Rect leftZoneArea;
         Rect centerZoneArea;
 
-        if (ALLIANCE == Location.RED && SIDE == Location.FAR || ALLIANCE == Location.BLUE && SIDE == Location.CLOSE) {
+        if (true) {
             leftZoneArea = new Rect(redLeftX, redLeftY, leftWidth, leftHeight);
             centerZoneArea = new Rect(redCenterX, redCenterY, centerWidth, centerHeight);
         } else {
@@ -102,8 +103,11 @@ public class PropPipeline implements VisionProcessor {
             telemetry.update();
         }
 
-        double threshold = ALLIANCE == Location.RED ? RED_TRESHOLD : BLUE_TRESHOLD;
-        int idx = ALLIANCE == Location.RED ? 0 : 2;
+//        double threshold = ALLIANCE == Location.RED ? RED_TRESHOLD : BLUE_TRESHOLD;
+//        int idx = ALLIANCE == Location.RED ? 0 : 2;
+
+        double threshold = BLUE_TRESHOLD;
+        int idx = 2;
 
         leftColor = left.val[idx];
         centerColor = center.val[idx];

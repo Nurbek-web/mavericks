@@ -133,7 +133,7 @@ public class MeepMeepTesting {
 
 
         TrajectoryActionBuilder trajStart, trajBackdrop;
-        int propPosition = 2;
+            int propPosition = 2;
 
         switch(propPosition){
             case 0: // right

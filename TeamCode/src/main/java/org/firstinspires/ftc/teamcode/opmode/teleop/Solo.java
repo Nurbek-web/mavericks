@@ -67,58 +67,61 @@ public class Solo extends CommandOpMode {
         robot.droneTrigger.setPosition(0.57);
 
         // G1 - Intake Control
-        gamepadEx.getGamepadButton(GamepadKeys.Button.B)
+        gamepadEx.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
                 .whenPressed(new ConditionalCommand(
                         new InstantCommand(() -> {
                             intake.raiseServo();
+                            intake.runIntake();
+                            Globals.raiseIntake();
                             telemetry.addLine("raiseServo");
                         }),
                         new InstantCommand(() -> {
                             intake.lowerServo();
+                            intake.stopIntake();
+                            Globals.lowerIntake();
                             telemetry.addLine("loweredServo");
                         }),
                         () -> Globals.INTAKE_LOWERED
                 ));
 
         // G1 - Intake Roll Control
-        gamepadEx.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
-                .whenPressed(
-                        new ConditionalCommand(
-                        new InstantCommand(() -> {
-                                    intake.runIntake();
-                                    telemetry.addLine("stopIntake");
-                                }),
-                                new InstantCommand(() -> {
-                                    intake.stopIntake();
-                                    telemetry.addLine("stopIntake");
-                                }),
-                                () -> Globals.IS_INTAKING != Globals.IntakeState.INTAKING
-                        )
-                );
+//        gamepadEx.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
+//                .whenPressed(
+//                        new ConditionalCommand(
+//                            new InstantCommand(() -> {
+//                                    intake.runIntake();
+//                                    telemetry.addLine("stopIntake");
+//                                    Globals.IS_INTAKING = Globals.IntakeState.INTAKING;
+//                                }),
+//                            new InstantCommand(() -> {
+//                                    intake.stopIntake();
+//                                    telemetry.addLine("stopIntake");
+//                                    Globals.IS_INTAKING = Globals.IntakeState.NOT_WORKING;
+//                            }),
+//                            () -> Globals.IS_INTAKING != Globals.IntakeState.INTAKING
+//                        )
+//                );
+//
+//        gamepadEx.getGamepadButton(GamepadKeys.Button.Y)
+//                .whenPressed(
+//                        new ConditionalCommand(
+//                                new InstantCommand(() -> {
+//                                    intake.releaseExtra();
+//                                    telemetry.addLine("stopIntake");
+//                                    Globals.IS_INTAKING = Globals.IntakeState.REVERSE;
+//                                }),
+//                                new InstantCommand(() -> {
+//                                    intake.stopIntake();
+//                                    telemetry.addLine("stopIntake");
+//                                    Globals.IS_INTAKING = Globals.IntakeState.NOT_WORKING;
+//                                }),
+//                                () -> Globals.IS_INTAKING != Globals.IntakeState.REVERSE
+//                        )
+//                );
 
-        gamepadEx.getGamepadButton(GamepadKeys.Button.Y)
-                .whenPressed(
-                        new ConditionalCommand(
-                                new InstantCommand(() -> {
-                                    intake.releaseExtra();
-                                    telemetry.addLine("stopIntake");
-                                }),
-                                new InstantCommand(() -> {
-                                    intake.stopIntake();
-                                    telemetry.addLine("stopIntake");
-                                }),
-                                () -> Globals.IS_INTAKING != Globals.IntakeState.REVERSE
-                        )
-                );
-
-        gamepadEx.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenPressed( // closeOuttake
+        gamepadEx.getGamepadButton(GamepadKeys.Button.Y).whenPressed(
                 new InstantCommand(() -> {
-                    if(outtakeClosed){
-                        lift.openOuttake();
-                    }else{
-                        lift.closeOuttake();
-                    }
-                    outtakeClosed = !outtakeClosed;
+                     intake.releaseExtra();
                 })
         );
 

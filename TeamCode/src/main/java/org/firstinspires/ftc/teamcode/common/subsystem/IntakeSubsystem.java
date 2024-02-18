@@ -15,27 +15,27 @@ public class IntakeSubsystem extends SubsystemBase {
     }
 
     public void runIntake(){
-        if(Globals.IS_INTAKING==Globals.IntakeState.INTAKING || !Globals.INTAKE_LOWERED){
-            return;
-        }
+//        if(Globals.IS_INTAKING==Globals.IntakeState.INTAKING || !Globals.INTAKE_LOWERED){
+//            return;
+//        }
         this.robot.intakeRoller.setPower(0.8);
         this.robot.intakeMotor.setPower(0.8);
         Globals.startIntaking();
     }
 
     public void stopIntake(){
-        if(Globals.IS_INTAKING==Globals.IntakeState.NOT_WORKING){
-            return;
-        }
+//        if(Globals.IS_INTAKING==Globals.IntakeState.NOT_WORKING){
+//            return;
+//        }
         this.robot.intakeRoller.setPower(0);
         this.robot.intakeMotor.setPower(0);
         Globals.stopIntaking();
     }
 
     public void lowerServo(){
-        if(Globals.INTAKE_LOWERED){
-            return;
-        }
+//        if(Globals.INTAKE_LOWERED){
+//            return;
+//        }
         this.robot.intakeServo.setPosition(0.34);
         Globals.lowerIntake();
     }

@@ -106,7 +106,7 @@ public class PropPipeline implements VisionProcessor {
 //        double threshold = ALLIANCE == Location.RED ? RED_TRESHOLD : BLUE_TRESHOLD;
 //        int idx = ALLIANCE == Location.RED ? 0 : 2;
 
-        double threshold = BLUE_TRESHOLD;
+        double threshold = RED_TRESHOLD;
         int idx = 2;
 
         leftColor = left.val[idx];

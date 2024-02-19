@@ -66,25 +66,26 @@ public class Solo extends CommandOpMode {
         hang.closeServo();
         robot.droneTrigger.setPosition(0.57);
 
-        // G1 - Intake Control
-        gamepadEx.getGamepadButton(GamepadKeys.Button.B)
-                .whenPressed(new ConditionalCommand(
-                        new InstantCommand(() -> {
-                            intake.lowerServo();
-                            intake.runIntake();
-//                            Globals.lowerIntake();
-                            telemetry.addLine("raiseServo");
-                        }),
-                        new InstantCommand(() -> {
-                            intake.raiseServo();
-                            intake.stopIntake();
-//                            Globals.raiseIntake();
-                            telemetry.addLine("loweredServo");
-                        }),
-                        () -> Globals.IS_INTAKING == Globals.IntakeState.INTAKING
-                ));
 
         // G1 - Intake Roll Control
+        gamepadEx.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
+                .whenPressed(
+                        new ConditionalCommand(
+                                new InstantCommand(() -> {
+                                    intake.raiseServo();
+                                    lift.openOuttake();
+                                    intake.runIntake();
+                                    telemetry.addLine("stopIntake");
+                                }),
+                                new InstantCommand(() -> {
+                                    intake.lowerServo();
+                                    intake.stopIntake();
+                                    telemetry.addLine("stopIntake");
+                                }),
+                                () -> Globals.IS_INTAKING != Globals.IntakeState.INTAKING
+                        )
+                );
+
         gamepadEx.getGamepadButton(GamepadKeys.Button.Y)
                 .whenPressed(
                         new ConditionalCommand(
@@ -101,23 +102,13 @@ public class Solo extends CommandOpMode {
                         )
                 );
 
+        gamepadEx.getGamepadButton(GamepadKeys.Button.Y).whenPressed(
+                new InstantCommand(() -> {
+                    intake.releaseExtra();
+                })
+        );
 
-        gamepadEx.getGamepadButton(GamepadKeys.Button.Y)
-                .whenPressed(
-                        new ConditionalCommand(
-                                new InstantCommand(() -> {
-                                    intake.releaseExtra();
-                                    telemetry.addLine("stopIntake");
-                                }),
-                                new InstantCommand(() -> {
-                                    intake.stopIntake();
-                                    telemetry.addLine("stopIntake");
-                                }),
-                                () -> Globals.IS_INTAKING != Globals.IntakeState.REVERSE
-                        )
-                );
-
-        gamepadEx.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenPressed( // closeOuttake
+        gamepadEx2.getGamepadButton(GamepadKeys.Button.X).whenPressed( // closeOuttake
                 new InstantCommand(() -> {
                     if(outtakeClosed){
                         lift.openOuttake();
@@ -125,6 +116,16 @@ public class Solo extends CommandOpMode {
                         lift.closeOuttake();
                     }
                     outtakeClosed = !outtakeClosed;
+                })
+        );
+        gamepadEx2.getGamepadButton(GamepadKeys.Button.Y).whenPressed( // extendOuttake
+                new InstantCommand(() -> {
+                    if(extendOuttake){
+                        lift.extend1Outtake();
+                    }else{
+                        lift.intendOuttake();
+                    }
+                    extendOuttake = !extendOuttake;
                 })
         );
 
@@ -188,8 +189,8 @@ public class Solo extends CommandOpMode {
 //                ), 0
 //        );
 
-//        robot.drivetrain.driveFieldCentric(-gamepad1.left_stick_y, gamepad1.left_stick_x * 1.1, gamepad1.right_stick_x, robot.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
-        robot.drivetrain.driveRobotCentric(-gamepad1.left_stick_y, gamepad1.left_stick_x * 1.1, gamepad1.right_stick_x);
+        robot.drivetrain.driveFieldCentric(-gamepad1.left_stick_y, gamepad1.left_stick_x * 1.1, gamepad1.right_stick_x, robot.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
+//        robot.drivetrain.driveRobotCentric(-gamepad1.left_stick_y, gamepad1.left_stick_x * 1.1, gamepad1.right_stick_x);
         telemetry.addData("left_stick_y", -gamepad1.left_stick_y);
         telemetry.addData("left_stick_x", gamepad1.left_stick_x);
         telemetry.addData("right_stick_x", gamepad1.right_stick_x);

@@ -85,6 +85,7 @@ public class Solo extends CommandOpMode {
                 .whenPressed(
                         new ConditionalCommand(
                                 new InstantCommand(() -> {
+                                    lift.openOuttake();
                                     intake.runIntake();
                                     telemetry.addLine("stopIntake");
                                 }),
@@ -100,6 +101,7 @@ public class Solo extends CommandOpMode {
                 .whenPressed(
                         new ConditionalCommand(
                                 new InstantCommand(() -> {
+                                    lift.closeOuttake();
                                     intake.releaseExtra();
                                     telemetry.addLine("stopIntake");
                                 }),

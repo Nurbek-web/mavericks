@@ -34,46 +34,11 @@ public final class SplineTest extends LinearOpMode {
     VisionPortal portal;
     Location randomization;
 
-    LiftSubsystem lift;
-    IntakeSubsystem intake;
-
-    public class LiftUp implements Action {
-        // checks if the lift motor has been powered on
-        private boolean initialized = false;
-
-        // actions are formatted via telemetry packets as below
-        @Override
-        public boolean run(@NonNull TelemetryPacket packet) {
-            // powers on motor, if it is not on
-            if (!initialized) {
-                lift.getMotor().setPower(0.8);
-                initialized = true;
-            }
-
-            // checks lift's current position
-            double pos = lift.getMotor().getCurrentPosition();
-            packet.put("liftPos", pos);
-            if (pos < 1400.0) {
-                // true causes the action to rerun
-                return true;
-            } else {
-                // false stops action rerun
-                lift.getMotor().setPower(0);
-                return false;
-            }
-            // overall, the action powers the lift until it surpasses
-            // 3000 encoder ticks, then powers it off
-        }
-    }
-
-
     @Override
     public void runOpMode() throws InterruptedException {
-        Pose2d beginPose = new Pose2d(-34, 60, Math.toRadians(90));
+        Pose2d beginPose = new Pose2d(0, 0, 0);
         robot = RobotHardware.getInstance();
-        propPipeline = new PropPipeline();
-        lift = new LiftSubsystem();
-        intake = new IntakeSubsystem();
+//        propPipeline = new PropPipeline();
         Globals.ALLIANCE = Location.BLUE;
         Globals.SIDE = Location.FAR;
 //        portal = new VisionPortal.Builder()
@@ -90,20 +55,19 @@ public final class SplineTest extends LinearOpMode {
 //            telemetry.update();
 //        }
 
-        while (opModeInInit()) {
-            telemetry.addLine("ready");
-//    ЕtrajStart;
-//
-//            waitForStart();
-//            trajStart = drive
-//                    .actionBuilder(new Pose2d(12, 60, Math.toRadians(90)))
-//                    .strafeToLinearHeading(new Vector2d(12, 60 ), Math.toRadians(180));
-//
-//            Actions.runBlocking(new SequentialAction(
-//                    trajStart.build()
-//            ));
 
-        }
+            TrajectoryActionBuilder trajStart;
+
+            MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(12, 60, Math.toRadians(90)));
+
+            waitForStart();
+            trajStart = drive
+                    .actionBuilder(new Pose2d(12, 60, Math.toRadians(90)))
+                    .strafeToLinearHeading(new Vector2d(12, 60 ), Math.toRadians(180));
+
+            Actions.runBlocking(new SequentialAction(
+                    trajStart.build()
+            ));
     }
 
     private static void blueNear(MecanumDrive drive) {

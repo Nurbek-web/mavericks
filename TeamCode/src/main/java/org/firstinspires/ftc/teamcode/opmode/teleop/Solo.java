@@ -101,7 +101,7 @@ public class Solo extends CommandOpMode {
                         )
                 );
 
-        gamepadEx2.getGamepadButton(GamepadKeys.Button.X).whenPressed( // closeOuttake
+        gamepadEx.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenPressed( // closeOuttake
                 new InstantCommand(() -> {
                     if(outtakeClosed){
                         lift.openOuttake();

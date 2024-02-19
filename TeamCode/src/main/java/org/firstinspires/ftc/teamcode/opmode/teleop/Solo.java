@@ -101,6 +101,22 @@ public class Solo extends CommandOpMode {
                         )
                 );
 
+
+        gamepadEx.getGamepadButton(GamepadKeys.Button.Y)
+                .whenPressed(
+                        new ConditionalCommand(
+                                new InstantCommand(() -> {
+                                    intake.releaseExtra();
+                                    telemetry.addLine("stopIntake");
+                                }),
+                                new InstantCommand(() -> {
+                                    intake.stopIntake();
+                                    telemetry.addLine("stopIntake");
+                                }),
+                                () -> Globals.IS_INTAKING != Globals.IntakeState.REVERSE
+                        )
+                );
+
         gamepadEx.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenPressed( // closeOuttake
                 new InstantCommand(() -> {
                     if(outtakeClosed){

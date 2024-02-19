@@ -67,7 +67,7 @@ public class Solo extends CommandOpMode {
         robot.droneTrigger.setPosition(0.57);
 
         // G1 - Intake Control
-        gamepadEx.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
+        gamepadEx.getGamepadButton(GamepadKeys.Button.B)
                 .whenPressed(new ConditionalCommand(
                         new InstantCommand(() -> {
                             intake.lowerServo();
@@ -85,22 +85,6 @@ public class Solo extends CommandOpMode {
                 ));
 
         // G1 - Intake Roll Control
-        gamepadEx.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
-                .whenPressed(
-                        new ConditionalCommand(
-                                new InstantCommand(() -> {
-                                    lift.openOuttake();
-                                    intake.runIntake();
-                                    telemetry.addLine("stopIntake");
-                                }),
-                                new InstantCommand(() -> {
-                                    intake.stopIntake();
-                                    telemetry.addLine("stopIntake");
-                                }),
-                                () -> Globals.IS_INTAKING != Globals.IntakeState.INTAKING
-                        )
-                );
-
         gamepadEx.getGamepadButton(GamepadKeys.Button.Y)
                 .whenPressed(
                         new ConditionalCommand(
@@ -117,12 +101,6 @@ public class Solo extends CommandOpMode {
                         )
                 );
 
-        gamepadEx.getGamepadButton(GamepadKeys.Button.Y).whenPressed(
-                new InstantCommand(() -> {
-                     intake.releaseExtra();
-                })
-        );
-
         gamepadEx2.getGamepadButton(GamepadKeys.Button.X).whenPressed( // closeOuttake
                 new InstantCommand(() -> {
                     if(outtakeClosed){
@@ -131,16 +109,6 @@ public class Solo extends CommandOpMode {
                         lift.closeOuttake();
                     }
                     outtakeClosed = !outtakeClosed;
-                })
-        );
-        gamepadEx2.getGamepadButton(GamepadKeys.Button.Y).whenPressed( // extendOuttake
-                new InstantCommand(() -> {
-                    if(extendOuttake){
-                        lift.extend1Outtake();
-                    }else{
-                        lift.intendOuttake();
-                    }
-                    extendOuttake = !extendOuttake;
                 })
         );
 

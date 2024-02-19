@@ -50,10 +50,6 @@ public class LiftSubsystem extends SubsystemBase {
 //        robot.liftMotor.setVelocity(200);
 //    }
 
-    public DcMotorEx getMotor(){
-        return robot.liftMotor;
-    }
-
     public void extend2Outtake() {
         // down
         this.robot.upRight.setPosition(0);

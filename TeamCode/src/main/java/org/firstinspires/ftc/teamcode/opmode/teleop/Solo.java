@@ -67,17 +67,21 @@ public class Solo extends CommandOpMode {
         robot.droneTrigger.setPosition(0.57);
 
         // G1 - Intake Control
-        gamepadEx.getGamepadButton(GamepadKeys.Button.B)
+        gamepadEx.getGamepadButton(GamepadKeys.Button.RIGHT_BUMPER)
                 .whenPressed(new ConditionalCommand(
                         new InstantCommand(() -> {
-                            intake.raiseServo();
+                            intake.lowerServo();
+                            intake.runIntake();
+//                            Globals.lowerIntake();
                             telemetry.addLine("raiseServo");
                         }),
                         new InstantCommand(() -> {
-                            intake.lowerServo();
+                            intake.raiseServo();
+                            intake.stopIntake();
+//                            Globals.raiseIntake();
                             telemetry.addLine("loweredServo");
                         }),
-                        () -> Globals.INTAKE_LOWERED
+                        () -> Globals.IS_INTAKING == Globals.IntakeState.INTAKING
                 ));
 
         // G1 - Intake Roll Control
@@ -113,14 +117,9 @@ public class Solo extends CommandOpMode {
                         )
                 );
 
-        gamepadEx.getGamepadButton(GamepadKeys.Button.LEFT_BUMPER).whenPressed( // closeOuttake
+        gamepadEx.getGamepadButton(GamepadKeys.Button.Y).whenPressed(
                 new InstantCommand(() -> {
-                    if(outtakeClosed){
-                        lift.openOuttake();
-                    }else{
-                        lift.closeOuttake();
-                    }
-                    outtakeClosed = !outtakeClosed;
+                     intake.releaseExtra();
                 })
         );
 

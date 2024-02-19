@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmode.testing.device;
 
+import static java.lang.Thread.sleep;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -49,66 +51,30 @@ public class LiftTest extends OpMode {
 
         lift = new LiftSubsystem();
 
+        robot.liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.liftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
     }
 
     @Override
     public void loop() {
-        robot.liftMotor.setPower(POWER);
 
-        if (gamepad1.right_bumper) { // upFront = 0; (opened)
-            robot.upLeft.setPosition(UP_LEFT); // upFront = 0.535 (closed)
-            robot.upRight.setPosition(UP_RIGHT);
-        }
-
-//        if (gamepad2.right_bumper) { // down
-//            robot.upRight.setPosition(0.8);
-//            robot.upLeft.setPosition(1);
+//        if (gamepad1.right_bumper) {
+//            double pos = robot.liftMotor.getCurrentPosition();
+//            while (pos > -1000) {
+//                pos = robot.liftMotor.getCurrentPosition();
+//                robot.liftMotor.setPower(1);
+//            }
+//            robot.liftMotor.setPower(0);
 //        }
 //
-//        if (gamepad2.left_bumper) { // up
-//            robot.upRight.setPosition(0);
-//            robot.upLeft.setPosition(0.47);
+//        if (gamepad1.left_bumper) {
+//            lift.liftzero();
 //        }
+//
+        robot.liftMotor.setPower(gamepad1.left_stick_y);
 
-        // bullsiht fuuuuuu ((((
-//        if(gamepad2.x){ // extendOuttake
-//            robot.upRight.setPosition(upRightPower);
-//            robot.upLeft.setPosition(upLeftPower);
-//        }
-//        if(gamepad2.y){ // reverseExtend
-//            robot.upRight.setPosition(upRightPowerZero);
-//            robot.upLeft.setPosition(upLeftPowerZero);
-//        }
-//        if(gamepad2.a){ // closeOuttake open
-//            if(openPixel){ // close
-//                robot.upFront.setPosition(closeOuttakePos);
-//            }else{ // open
-//                robot.upFront.setPosition(openOuttakePos);
-//            }
-//        }
-
-//        if (gamepad1.a){
-////        robot.liftMotor.setTargetPosition(-robot.liftMotor.getCurrentPosition()); // 0
-////        robot.liftMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-////        robot.liftMotor.setVelocity(200);
-//            robot.liftMotor.setPower(0);
-////          sleep(100);
-//        }
-//        if (gamepad1.b) {
-//            robot.liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//            robot.liftMotor.setTargetPosition(liftLevel1); // 700
-//            robot.liftMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-//            robot.liftMotor.setVelocity(200);
-//        }
-//        if (gamepad1.x){
-//            robot.liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//            robot.liftMotor.setTargetPosition(liftLevel2); // 1400
-//            robot.liftMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-//            robot.liftMotor.setVelocity(200);
-//        }
-
-
-        telemetry.addData("power", POWER);
+        telemetry.addData("liftPos", robot.liftMotor.getCurrentPosition());
 
 
 //        telemetry.addData("upRight: ", robot.upRight.get);

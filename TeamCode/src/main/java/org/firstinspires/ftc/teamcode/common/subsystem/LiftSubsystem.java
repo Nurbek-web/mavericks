@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.common.subsystem;
 
+import static java.lang.Thread.sleep;
+
 import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -17,25 +19,40 @@ public class LiftSubsystem extends SubsystemBase {
     public LiftSubsystem(){}
 
     // lift the system
-//    public void liftzero(){
-////        robot.liftMotor.setTargetPosition(-robot.liftMotor.getCurrentPosition()); // 0
-////        robot.liftMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-////        robot.liftMotor.setVelocity(200);
-//          robot.liftMotor.setPower(0);
-////          sleep(100);
-//    }
-//    public void liftFirstLevel(){
-//        robot.liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        robot.liftMotor.setTargetPosition(liftLevel1); // 700
-//        robot.liftMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
-//        robot.liftMotor.setVelocity(200);
-//    }
+    public void liftzero(){
+
+        intendOuttake();
+
+        robot.liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        robot.liftMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        robot.liftMotor.setTargetPosition(-1200);
+        robot.liftMotor.setPower(0.5);
+    }
+    public void liftFirstLevel() throws InterruptedException {
+        robot.liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        robot.liftMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        double pos = robot.liftMotor.getCurrentPosition();
+        while (pos > -1000) {
+            pos = robot.liftMotor.getCurrentPosition();
+            robot.liftMotor.setPower(1);
+        }
+        robot.liftMotor.setPower(0);
+
+        extend1Outtake();
+        openOuttake();
+    }
 //    public void liftSecondLevel(){
 //        robot.liftMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 //        robot.liftMotor.setTargetPosition(liftLevel2); // 1400
 //        robot.liftMotor.setMode(DcMotorEx.RunMode.RUN_TO_POSITION);
 //        robot.liftMotor.setVelocity(200);
 //    }
+
+    public DcMotorEx getMotor(){
+        return robot.liftMotor;
+    }
 
     public void extend2Outtake() {
         // down

@@ -21,7 +21,7 @@ public class Globals {
         REVERSE
     }
     public static IntakeState IS_INTAKING = IntakeState.NOT_WORKING;
-    public static boolean INTAKE_LOWERED = false;
+    public static boolean INTAKE_LOWERED = true;
 
 
     public enum LiftLevel {

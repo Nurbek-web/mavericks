@@ -168,7 +168,7 @@ public class TestAuto extends LinearOpMode {
                 trajBackdrop = drive.actionBuilder(new Pose2d(-36, 34, Math.toRadians(0)))
                         .strafeToConstantHeading(new Vector2d(-34, 60))
                         .strafeToConstantHeading(new Vector2d(12, 60))
-                        .splineToConstantHeading(new Vector2d(37.8, 28.5), Math.PI / 2);
+                        .splineToLinearHeading(new Pose2d(37.8, 28.5, Math.toRadians(180)), 0);
                 break;
             case CENTER: // center
                 trajStart = drive.actionBuilder(new Pose2d(-34, 60, Math.toRadians(90)))
@@ -176,7 +176,7 @@ public class TestAuto extends LinearOpMode {
                 trajBackdrop = drive.actionBuilder(new Pose2d(-34, 30, Math.toRadians(90)))
                         .strafeToConstantHeading(new Vector2d(-34, 60))
                         .strafeToConstantHeading(new Vector2d(12, 60))
-                        .splineToConstantHeading(new Vector2d(37.8, 35.5), Math.PI / 2);
+                        .splineToLinearHeading(new Pose2d(37.8, 35.5, Math.toRadians(180)), 0);
                 break;
             case LEFT: // left
                 telemetry.addLine("LEFT");
@@ -188,7 +188,7 @@ public class TestAuto extends LinearOpMode {
                                 -34, 30, Math.toRadians(180)))
                         .strafeToConstantHeading(new Vector2d(-34, 58))
                         .strafeToConstantHeading(new Vector2d(12, 58))
-                        .splineToConstantHeading(new Vector2d(37.8, 45.5), Math.PI / 2);
+                        .splineToConstantHeading(new Vector2d(37.8, 45.5), 0);
                 break;
             default:
                 throw new Error("Unknown team prop position");

@@ -4,12 +4,14 @@ import android.util.Size;
 
 import androidx.annotation.NonNull;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
@@ -26,7 +28,8 @@ import org.firstinspires.ftc.teamcode.common.vision.Location;
 import org.firstinspires.ftc.teamcode.common.vision.PropPipeline;
 import org.firstinspires.ftc.vision.VisionPortal;
 
-
+@Config
+@Autonomous(name = "BLUE_TEST_AUTO_PIXEL", group = "Autonomous")
 public final class SplineTest extends LinearOpMode {
 
     RobotHardware robot;

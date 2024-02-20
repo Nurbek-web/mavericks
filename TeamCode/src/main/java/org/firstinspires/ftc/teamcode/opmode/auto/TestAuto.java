@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.opmode.auto;
 
 import androidx.annotation.NonNull;
+
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
@@ -12,24 +14,58 @@ import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
+
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
+import org.firstinspires.ftc.teamcode.common.hardware.Globals;
 import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
 import org.firstinspires.ftc.teamcode.common.subsystem.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.common.subsystem.LiftSubsystem;
 import org.firstinspires.ftc.teamcode.common.vision.Location;
+import org.firstinspires.ftc.teamcode.vision.BasicPipeline;
 import org.firstinspires.ftc.vision.VisionPortal;
+import org.openftc.easyopencv.OpenCvCamera;
+import org.openftc.easyopencv.OpenCvCameraFactory;
+import org.openftc.easyopencv.OpenCvCameraRotation;
 
 
 @Config
 @Autonomous(name = "TestAuto", group = "Autonomous")
 public class TestAuto extends LinearOpMode {
-    RobotHardware robot;
-//    PropPipeline propPipeline;
+    private final RobotHardware robot = RobotHardware.getInstance();
+    BasicPipeline pipeline = new BasicPipeline();
+    OpenCvCamera camera;
+    FtcDashboard dashboard = FtcDashboard.getInstance();
+
+    public Servo autoServo;
+    //    PropPipeline propPipeline;
     VisionPortal portal;
     Location randomization;
 
     LiftSubsystem lift;
     IntakeSubsystem intake;
+    Location loc;
+    public class Sleep implements Action {
+        @Override
+        public boolean run(@NonNull TelemetryPacket packet) {
+            autoServo.setPosition(0.68);
+            sleep(4000);
+            return false;
+        }
+    }
+
+
+    public class DropPixel implements Action {
+        @Override
+        public boolean run(@NonNull TelemetryPacket packet) {
+                autoServo.setPosition(0.68);
+                sleep(1000);
+                return false;
+            }
+    }
 
     public class LiftUp implements Action {
         // checks if the lift motor has been powered on
@@ -48,12 +84,15 @@ public class TestAuto extends LinearOpMode {
             double pos = robot.liftMotor.getCurrentPosition();
             packet.put("liftPos", pos);
 
-            if (pos < 1400) {
+            if (pos < 1200) {
                 // true causes the action to rerun
                 return true;
             } else {
                 // false stops action rerun
                 robot.liftMotor.setPower(0);
+                lift.extend1Outtake();
+                sleep(3000);
+                lift.openOuttake();
                 return false;
             }
             // overall, the action powers the lift until it surpasses
@@ -64,17 +103,50 @@ public class TestAuto extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(-34, 60, Math.toRadians(90)));
-
+        Globals.IS_AUTO = true;
         // vision here that outputs position
         int visionOutputPosition = 1;
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "webka"), cameraMonitorViewId);
+        camera.setPipeline(pipeline);
+        camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
+            @Override
+            public void onOpened() {
+                camera.startStreaming(1280, 720, OpenCvCameraRotation.UPRIGHT);
+            }
 
-        Action trajectoryAction1;
+            @Override
+            public void onError(int errorCode) {
+            }
+        });
 
+        sleep(3500);
+
+        if (pipeline.getJunctionPoint().x < 170) {
+            telemetry.addLine("LEFT PROP");
+            loc = Location.LEFT;
+        }
+        else if (pipeline.getJunctionPoint().x > 750) {
+            loc = Location.RIGHT;
+            telemetry.addLine("RIGHT PROP");
+        } else {
+            loc = Location.CENTER;
+            telemetry.addLine("CENTER PROP");
+        }
+
+        telemetry.update();
+        robot.init(hardwareMap);
+        MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(-34, 60, Math.toRadians(90)));
+        lift = new LiftSubsystem();
+
+        autoServo = hardwareMap.get(Servo.class, "autoServo");
+        robot.liftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        autoServo.setPosition(1);
 
         waitForStart();
 
-        blueFar(drive, Location.LEFT);
+        telemetry.addLine("STARTED");
+        blueFar(drive, loc);
 
     }
 
@@ -101,12 +173,16 @@ public class TestAuto extends LinearOpMode {
                         .strafeToLinearHeading(new Vector2d(48, 33), Math.toRadians(180));
                 break;
             case LEFT: // left
+                telemetry.addLine("LEFT");
                 trajStart = drive.actionBuilder(new Pose2d(-34, 60, Math.toRadians(90)))
-                        .lineToY(46).strafeToLinearHeading(new Vector2d(-34, 30), Math.toRadians(180));
-                trajBackdrop = drive.actionBuilder(new Pose2d(-34, 30, Math.toRadians(180)))
+                        .lineToY(46).strafeToLinearHeading(new Vector2d(-34, 30), Math.toRadians(180))
+                        .strafeToLinearHeading(new Vector2d(-27.5, 30), Math.toRadians(180))
+                        .strafeToLinearHeading(new Vector2d(-34, 30), Math.toRadians(180));
+                trajBackdrop = drive.actionBuilder(new Pose2d(
+                                -34, 30, Math.toRadians(180)))
                         .strafeToConstantHeading(new Vector2d(-34, 58))
                         .strafeToConstantHeading(new Vector2d(12, 58))
-                        .strafeToConstantHeading(new Vector2d(48, 33));
+                        .splineToConstantHeading(new Vector2d(39.1, 41), Math.PI / 2);
                 break;
             default:
                 throw new Error("Unknown team prop position");
@@ -114,12 +190,12 @@ public class TestAuto extends LinearOpMode {
 
         Actions.runBlocking(new SequentialAction(
                 trajStart.build(),
-                new ParallelAction(
-                        trajBackdrop.build(),
-                        new LiftUp()
-                )
+                new DropPixel(),
+                trajBackdrop.build(),
+                new LiftUp()
+            )
 
-        ));
+        );
 
     }
 

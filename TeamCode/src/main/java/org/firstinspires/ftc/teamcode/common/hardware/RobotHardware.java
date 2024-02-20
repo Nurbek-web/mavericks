@@ -147,10 +147,11 @@ public class RobotHardware {
     public void init(final HardwareMap hardwareMap) {
         this.hardwareMap = hardwareMap;
         this.values = new HashMap<>();
+//
+//        values.put(Sensors.SensorType.POD_LEFT, 0.0);
+//        values.put(Sensors.SensorType.POD_FRONT, 0.0);
+//        values.put(Sensors.SensorType.POD_RIGHT, 0.0);
 
-        values.put(Sensors.SensorType.POD_LEFT, 0.0);
-        values.put(Sensors.SensorType.POD_FRONT, 0.0);
-        values.put(Sensors.SensorType.POD_RIGHT, 0.0);
 
         // DRIVETRAIN
         this.dtBackLeftMotor = hardwareMap.get(DcMotorEx.class, "dtBackLeftMotor");
@@ -360,7 +361,7 @@ public class RobotHardware {
                 .build();
 
         visionPortal = new VisionPortal.Builder()
-                .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
+                .setCamera(hardwareMap.get(WebcamName.class, "webka"))
                 .setCameraResolution(new Size(640, 480))
                 .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
                 .addProcessor(aprilTag)

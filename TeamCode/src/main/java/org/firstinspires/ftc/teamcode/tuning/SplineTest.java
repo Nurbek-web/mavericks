@@ -51,7 +51,7 @@ public final class SplineTest extends LinearOpMode {
 
             TrajectoryActionBuilder trajStart;
 
-            MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(0, 60, Math.toRadians(90)));
+            MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(12, 60, Math.toRadians(90)));
 
             waitForStart();
             trajStart = drive

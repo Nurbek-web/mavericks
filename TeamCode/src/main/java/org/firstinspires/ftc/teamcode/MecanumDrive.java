@@ -88,9 +88,9 @@ public final class MecanumDrive {
 //        public double lateralVelGain = 1;
 //
 //        public double headingVelGain = 1; // shared with turn
-        public double inPerTick = 0.0029190064874884; // 0.003
+        public double inPerTick = 0.0027190064874884; // 0.003
         public double lateralInPerTick = 0.0022191750724281944; // previous: 0.0022599960981084036
-        public double trackWidthTicks = 4993.699825543864; // 4940.400117360261 4984.441037941021
+        public double trackWidthTicks = 4940.699825543864; // 4940.400117360261 4984.441037941021
 
         // feedforward parameters (in tick units)
         public double kS = 0.9198381568409078; // previous: 0.45044324435409533

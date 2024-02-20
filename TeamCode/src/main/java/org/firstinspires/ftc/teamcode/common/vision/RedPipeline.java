@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.vision;
+package org.firstinspires.ftc.teamcode.common.vision;
 
 import org.opencv.core.*;
 import org.opencv.core.Mat;
@@ -18,10 +18,10 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 // have JunctionPipeline return an x coordinate and a y coordinate in a list, maybe?
 
-public class PropPipeline extends OpenCvPipeline {
+public class RedPipeline extends OpenCvPipeline {
     Telemetry telemetry;
 
-    public PropPipeline(Telemetry telemetry) {
+    public RedPipeline(Telemetry telemetry) {
         this.telemetry = telemetry;
     }
 

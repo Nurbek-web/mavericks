@@ -133,7 +133,7 @@ public class MeepMeepTesting {
 
 
         TrajectoryActionBuilder trajStart, trajBackdrop;
-            int propPosition = 0;
+            int propPosition = 1;
 
         switch(propPosition){
             case 0: // right
@@ -152,6 +152,10 @@ public class MeepMeepTesting {
                         .splineToConstantHeading(new Vector2d(15, 58), 0)
                         .splineToSplineHeading(new Pose2d(38, 38, Math.PI), Math.toRadians(0));
 //                        .splineToSplineHeading(new Pose2d(40, 32, Math.PI), 0);
+
+//                        .strafeToConstantHeading(new Vector2d(-34, 60))
+//                        .strafeToConstantHeading(new Vector2d(12, 60))
+//                        .splineToLinearHeading(new Pose2d(37.8, 28.5, Math.toRadians(180)), 0);
                 break;
             case 1: // center
                 trajStart = myBot.getDrive().actionBuilder(new Pose2d(-34, 60, Math.toRadians(90)))
@@ -159,7 +163,7 @@ public class MeepMeepTesting {
                 trajBackdrop = myBot.getDrive().actionBuilder(new Pose2d(-34, 30, Math.toRadians(90)))
                         .strafeToConstantHeading(new Vector2d(-34, 60))
                         .strafeToConstantHeading(new Vector2d(12, 60))
-                        .splineToConstantHeading(new Vector2d(37.8, 35.5), Math.PI / 2);
+                        .splineToLinearHeading(new Pose2d(37.8, 35.5, Math.toRadians(180)), 0);
                 break;
             case 2: // left
                 trajStart = myBot.getDrive().actionBuilder(new Pose2d(-34, 60, Math.toRadians(90)))
@@ -170,7 +174,7 @@ public class MeepMeepTesting {
                                 -34, 30, Math.toRadians(180)))
                         .strafeToConstantHeading(new Vector2d(-34, 58))
                         .strafeToConstantHeading(new Vector2d(12, 58))
-                        .splineToConstantHeading(new Vector2d(37.8, 45.5), Math.PI / 2);
+                        .splineToConstantHeading(new Vector2d(37.8, 45.5), 0);
                 break;
             default:
                 throw new Error("Unknown team prop position");
@@ -222,7 +226,7 @@ public class MeepMeepTesting {
                         .strafeToLinearHeading(new Vector2d(48, -33), Math.toRadians(180))
                         ;
                 break;
-            case 2: // left
+            case 2: // right
                 trajStart = myBot.getDrive()
                         .actionBuilder(new Pose2d(12, -60, Math.toRadians(270)))
                         .strafeToLinearHeading(new Vector2d(14, -34), 0);

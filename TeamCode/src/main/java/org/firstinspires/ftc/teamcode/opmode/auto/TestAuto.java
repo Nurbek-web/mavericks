@@ -11,6 +11,7 @@ import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
+import com.acmerobotics.roadrunner.VelConstraint;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
@@ -166,16 +167,17 @@ public class TestAuto extends LinearOpMode {
                         .strafeToLinearHeading(new Vector2d(-41, 34), Math.toRadians(0))
                         .strafeToLinearHeading(new Vector2d(-36, 34), Math.toRadians(0));
                 trajBackdrop = drive.actionBuilder(new Pose2d(-36, 34, Math.toRadians(0)))
-                        .strafeToConstantHeading(new Vector2d(-34, 60))
-                        .strafeToConstantHeading(new Vector2d(12, 60))
+                        .strafeToConstantHeading(new Vector2d(-34, 57))
+                        .strafeToConstantHeading(new Vector2d(12, 57))
                         .splineToLinearHeading(new Pose2d(37.8, 28.5, Math.toRadians(180)), 0);
                 break;
             case CENTER: // center
                 trajStart = drive.actionBuilder(new Pose2d(-34, 60, Math.toRadians(90)))
-                        .strafeToConstantHeading(new Vector2d(-34, 30));
-                trajBackdrop = drive.actionBuilder(new Pose2d(-34, 30, Math.toRadians(90)))
-                        .strafeToConstantHeading(new Vector2d(-34, 60))
-                        .strafeToConstantHeading(new Vector2d(12, 60))
+                        .strafeToConstantHeading(new Vector2d(-34, 30))
+                        .strafeToConstantHeading(new Vector2d(-34, 35));
+                trajBackdrop = drive.actionBuilder(new Pose2d(-34, 35, Math.toRadians(90)))
+                        .strafeToConstantHeading(new Vector2d(-34, 57))
+                        .strafeToConstantHeading(new Vector2d(12, 57))
                         .splineToLinearHeading(new Pose2d(37.8, 35.5, Math.toRadians(180)), 0);
                 break;
             case LEFT: // left
@@ -186,8 +188,8 @@ public class TestAuto extends LinearOpMode {
                         .strafeToLinearHeading(new Vector2d(-34, 30), Math.toRadians(180));
                 trajBackdrop = drive.actionBuilder(new Pose2d(
                                 -34, 30, Math.toRadians(180)))
-                        .strafeToConstantHeading(new Vector2d(-34, 58))
-                        .strafeToConstantHeading(new Vector2d(12, 58))
+                        .strafeToConstantHeading(new Vector2d(-34, 57))
+                        .strafeToConstantHeading(new Vector2d(12, 57))
                         .splineToConstantHeading(new Vector2d(37.8, 45.5), 0);
                 break;
             default:

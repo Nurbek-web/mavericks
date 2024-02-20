@@ -84,15 +84,17 @@ public class TestAuto extends LinearOpMode {
             double pos = robot.liftMotor.getCurrentPosition();
             packet.put("liftPos", pos);
 
-            if (pos < 1200) {
+            if (pos < 1550) {
                 // true causes the action to rerun
                 return true;
             } else {
                 // false stops action rerun
                 robot.liftMotor.setPower(0);
                 lift.extend1Outtake();
-                sleep(3000);
+                sleep(1000);
                 lift.openOuttake();
+
+                sleep(2000);
                 return false;
             }
             // overall, the action powers the lift until it surpasses
@@ -142,6 +144,8 @@ public class TestAuto extends LinearOpMode {
         autoServo = hardwareMap.get(Servo.class, "autoServo");
         robot.liftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         autoServo.setPosition(1);
+        lift.closeOuttake();
+        lift.intendOuttake();
 
         waitForStart();
 
@@ -158,19 +162,21 @@ public class TestAuto extends LinearOpMode {
             case RIGHT: // right
                 trajStart = drive.actionBuilder(new Pose2d(-34, 60, Math.toRadians(90)))
                         .strafeToLinearHeading(new Vector2d(-38, 45), Math.toRadians(45))
+                        .strafeToLinearHeading(new Vector2d(-36, 34), Math.toRadians(0))
+                        .strafeToLinearHeading(new Vector2d(-41, 34), Math.toRadians(0))
                         .strafeToLinearHeading(new Vector2d(-36, 34), Math.toRadians(0));
                 trajBackdrop = drive.actionBuilder(new Pose2d(-36, 34, Math.toRadians(0)))
-                        .strafeToConstantHeading(new Vector2d(-34, 58))
-                        .strafeToConstantHeading(new Vector2d(12, 58))
-                        .strafeToLinearHeading(new Vector2d(48, 33), Math.toRadians(180));
+                        .strafeToConstantHeading(new Vector2d(-34, 60))
+                        .strafeToConstantHeading(new Vector2d(12, 60))
+                        .splineToConstantHeading(new Vector2d(37.8, 28.5), Math.PI / 2);
                 break;
             case CENTER: // center
                 trajStart = drive.actionBuilder(new Pose2d(-34, 60, Math.toRadians(90)))
-                        .strafeToConstantHeading(new Vector2d(-34, 34));
-                trajBackdrop = drive.actionBuilder(new Pose2d(-34, 34, Math.toRadians(90)))
-                        .strafeToConstantHeading(new Vector2d(-34, 58))
-                        .strafeToConstantHeading(new Vector2d(12, 58))
-                        .strafeToLinearHeading(new Vector2d(48, 33), Math.toRadians(180));
+                        .strafeToConstantHeading(new Vector2d(-34, 30));
+                trajBackdrop = drive.actionBuilder(new Pose2d(-34, 30, Math.toRadians(90)))
+                        .strafeToConstantHeading(new Vector2d(-34, 60))
+                        .strafeToConstantHeading(new Vector2d(12, 60))
+                        .splineToConstantHeading(new Vector2d(37.8, 35.5), Math.PI / 2);
                 break;
             case LEFT: // left
                 telemetry.addLine("LEFT");
@@ -182,7 +188,7 @@ public class TestAuto extends LinearOpMode {
                                 -34, 30, Math.toRadians(180)))
                         .strafeToConstantHeading(new Vector2d(-34, 58))
                         .strafeToConstantHeading(new Vector2d(12, 58))
-                        .splineToConstantHeading(new Vector2d(39.1, 41), Math.PI / 2);
+                        .splineToConstantHeading(new Vector2d(37.8, 45.5), Math.PI / 2);
                 break;
             default:
                 throw new Error("Unknown team prop position");

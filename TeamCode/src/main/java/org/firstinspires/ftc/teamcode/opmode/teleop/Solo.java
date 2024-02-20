@@ -45,6 +45,8 @@ public class Solo extends CommandOpMode {
     HangSubsystem hang;
     LiftSubsystem lift;
 
+    private double angle;
+
     @Override
     public void initialize() {
         CommandScheduler.getInstance().reset();
@@ -174,6 +176,8 @@ public class Solo extends CommandOpMode {
         robot.periodic();
         robot.write();
 
+        angle = robot.getAngle();
+
         robot.liftMotor.setPower(gamepad2.left_stick_y);
 
         if (gamepad1.options) {
@@ -189,7 +193,7 @@ public class Solo extends CommandOpMode {
 //                ), 0
 //        );
 
-        robot.drivetrain.driveFieldCentric(-gamepad1.left_stick_y, gamepad1.left_stick_x * 1.1, gamepad1.right_stick_x, robot.imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
+        robot.drivetrain.driveFieldCentric(-gamepad1.left_stick_y, gamepad1.left_stick_x * 1.1, gamepad1.right_stick_x, angle);
 //        robot.drivetrain.driveRobotCentric(-gamepad1.left_stick_y, gamepad1.left_stick_x * 1.1, gamepad1.right_stick_x);
         telemetry.addData("left_stick_y", -gamepad1.left_stick_y);
         telemetry.addData("left_stick_x", gamepad1.left_stick_x);
@@ -209,6 +213,7 @@ public class Solo extends CommandOpMode {
         telemetry.addData("left_stick_y", gamepad2.left_stick_y);
 
         double loop = System.nanoTime();
+        telemetry.addData("IMU angle: ", angle);
         telemetry.addData("hz ", 1000000000 / (loop - loopTime));
 //        telemetry.addData("height", robot.extension.getBackdropHeight());
         loopTime = loop;

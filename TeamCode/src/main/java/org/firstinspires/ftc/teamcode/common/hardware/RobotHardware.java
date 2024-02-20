@@ -43,8 +43,10 @@ import org.firstinspires.ftc.teamcode.common.util.InverseKinematics;
 import org.firstinspires.ftc.teamcode.common.util.wrappers.WEncoder;
 import org.firstinspires.ftc.teamcode.common.util.wrappers.WServo;
 import org.firstinspires.ftc.teamcode.common.util.wrappers.WSubsystem;
+import org.firstinspires.ftc.teamcode.common.vision.Location;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
+import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
 import java.util.ArrayList;
@@ -374,46 +376,52 @@ public class RobotHardware {
         return null;
     }
 
-//    public Pose getAprilTagPosition() {
-//        if (aprilTag != null && localizer != null) {
-//            List<AprilTagDetection> currentDetections = aprilTag.getDetections();
-//
-//            List<Pose> backdropPositions = new ArrayList<>();
-//            for (AprilTagDetection detection : currentDetections) {
-//                if (detection.metadata != null) {
-//                    switch (detection.id) {
-//                        case 1:
-//                        case 4:
-//                            backdropPositions.add(new Pose(detection.ftcPose).add(new Pose(6, 0, 0)));
-//                            break;
-//                        case 2:
-//                        case 5:
-//                            backdropPositions.add(new Pose(detection.ftcPose));
-//                            break;
-//                        case 3:
-//                        case 6:
-//                            backdropPositions.add(new Pose(detection.ftcPose).subt(new Pose(6, 0, 0)));
-//                            break;
-//                        default:
-//                            break;
-//                    }
+    public AprilTagPoseFtc getAprilTagPosition(Location side) {
+        if (aprilTag == null) {
+            return null;
+        }
+        List<AprilTagDetection> currentDetections = aprilTag.getDetections();
+
+        List<Pose> backdropPositions = new ArrayList<>();
+        for (AprilTagDetection detection : currentDetections) {
+            if (detection.metadata != null) {
+                if((side==Location.LEFT && (detection.id==1 || detection.id==4))
+                || (side==Location.CENTER && (detection.id==2 || detection.id==5))
+                || (side==Location.RIGHT && (detection.id==3 || detection.id==6))){
+                    return detection.ftcPose;
+                }
+//                switch (detection.id) {
+//                    case 1: // left
+//                    case 4:
+//                        backdropPositions.add(new Pose(detection.ftcPose).add(new Pose(6, 0, 0)));
+//                        break;
+//                    case 2: // center
+//                    case 5:
+//                        backdropPositions.add(new Pose(detection.ftcPose));
+//                        break;
+//                    case 3: // right
+//                    case 6:
+//                        backdropPositions.add(new Pose(detection.ftcPose).subt(new Pose(6, 0, 0)));
+//                        break;
+//                    default:
+//                        break;
 //                }
-//            }
+            }
+        }
+
+        return null;
+
+//        Pose backdropPosition = backdropPositions.stream().reduce(Pose::add).orElse(new Pose());
+//        backdropPosition = backdropPosition.divide(new Pose(backdropPositions.size(), backdropPositions.size(), backdropPositions.size()));
+//        return backdropPosition;
+
+//        Pose globalTagPosition = localizer.getPose().x > 0 ?
+//                AprilTagLocalizer.convertBlueBackdropPoseToGlobal(backdropPosition) :
+//                AprilTagLocalizer.convertRedBackdropPoseToGlobal(backdropPosition);
 //
-//            Pose backdropPosition = backdropPositions.stream().reduce(Pose::add).orElse(new Pose());
-//            backdropPosition = backdropPosition.divide(new Pose(backdropPositions.size(), backdropPositions.size(), backdropPositions.size()));
-//
-//
-//            Pose globalTagPosition = localizer.getPose().x > 0 ?
-//                    AprilTagLocalizer.convertBlueBackdropPoseToGlobal(backdropPosition) :
-//                    AprilTagLocalizer.convertRedBackdropPoseToGlobal(backdropPosition);
-//
-//            if (Double.isNaN(globalTagPosition.x) || Double.isNaN(globalTagPosition.y) || Double.isNaN(globalTagPosition.heading)) return null;
-//            return globalTagPosition;
-//        } else {
-//            return null;
-//        }
-//    }
+//        if (Double.isNaN(globalTagPosition.x) || Double.isNaN(globalTagPosition.y) || Double.isNaN(globalTagPosition.heading)) return null;
+//        return globalTagPosition;
+    }
 
 
                             public void closeCamera() {

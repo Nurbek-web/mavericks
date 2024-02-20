@@ -198,6 +198,7 @@ public class TestAuto extends LinearOpMode {
                 trajStart.build(),
                 new DropPixel(),
                 trajBackdrop.build(),
+                //
                 new LiftUp()
             )
 

@@ -147,9 +147,9 @@ public class MeepMeepTesting {
                         .splineToSplineHeading(new Pose2d(-41, 34, 0), Math.PI)
                         .splineToSplineHeading(new Pose2d(-36, 34, 0), Math.toRadians(0));
                 trajBackdrop = myBot.getDrive().actionBuilder(new Pose2d(-36, 34, Math.toRadians(0)))
-                        .splineToSplineHeading(new Pose2d(-34, 56, 0), Math.PI/2)
-                        .splineToSplineHeading(new Pose2d(-12, 58, 0), 0)
-                        .splineToSplineHeading(new Pose2d(15, 58, 0), 0)
+                        .strafeToSplineHeading(new Vector2d(-34, 54), Math.PI/2)
+                        .splineToConstantHeading(new Vector2d(-12, 58), 0)
+                        .splineToConstantHeading(new Vector2d(15, 58), 0)
                         .splineToSplineHeading(new Pose2d(38, 38, Math.PI), Math.toRadians(0));
 //                        .splineToSplineHeading(new Pose2d(40, 32, Math.PI), 0);
                 break;

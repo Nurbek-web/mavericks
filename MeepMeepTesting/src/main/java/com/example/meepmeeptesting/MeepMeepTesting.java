@@ -17,7 +17,7 @@ enum Route {
 }
 
 public class MeepMeepTesting {
-    public static final Route ROUTE = Route.RED_FAR;
+    public static final Route ROUTE = Route.BLUE_FAR;
 
     public static final double DELAY = 0.5;
     public static final double MAX_VEL = 60;
@@ -133,13 +133,14 @@ public class MeepMeepTesting {
 
 
         TrajectoryActionBuilder trajStart, trajBackdrop;
-            int propPosition = 2;
+            int propPosition = 0;
 
         switch(propPosition){
             case 0: // right
                 trajStart = myBot.getDrive().actionBuilder(new Pose2d(-34, 60, Math.toRadians(90)))
-                        .strafeToLinearHeading(new Vector2d(-38, 45), Math.toRadians(45))
-                        .strafeToLinearHeading(new Vector2d(-36, 34), Math.toRadians(0));
+                .splineToSplineHeading(new Pose2d(-38, 45, Math.toRadians(45)),  Math.atan((double)15/2)+Math.PI)
+//                trajStart = myBot.getDrive().actionBuilder(new Pose2d(0, 0, 0))
+//                        .splineToSplineHeading(new Pose2d(40, 40, Math.toRadians(45)), 0);
                 trajBackdrop = myBot.getDrive().actionBuilder(new Pose2d(-36, 34, Math.toRadians(0)))
                         .strafeToConstantHeading(new Vector2d(-34, 60))
                         .strafeToConstantHeading(new Vector2d(12, 60))
@@ -155,30 +156,33 @@ public class MeepMeepTesting {
                 break;
             case 2: // left
                 trajStart = myBot.getDrive().actionBuilder(new Pose2d(-34, 60, Math.toRadians(90)))
-                        .lineToY(46).strafeToLinearHeading(new Vector2d(-34, 30), Math.toRadians(180));
-                trajBackdrop = myBot.getDrive().actionBuilder(new Pose2d(-34, 30, Math.toRadians(180)))
+                        .lineToY(46).strafeToLinearHeading(new Vector2d(-34, 30), Math.toRadians(180))
+                        .strafeToLinearHeading(new Vector2d(-27.5, 30), Math.toRadians(180))
+                        .strafeToLinearHeading(new Vector2d(-34, 30), Math.toRadians(180));
+                trajBackdrop = myBot.getDrive().actionBuilder(new Pose2d(
+                                -34, 30, Math.toRadians(180)))
                         .strafeToConstantHeading(new Vector2d(-34, 58))
                         .strafeToConstantHeading(new Vector2d(12, 58))
-                        .strafeToConstantHeading(new Vector2d(48, 33));
+                        .splineToConstantHeading(new Vector2d(38.5, 41), Math.PI / 2);
                 break;
             default:
                 throw new Error("Unknown team prop position");
         }
 
-        TrajectoryActionBuilder fTraj = myBot.getDrive().actionBuilder(new Pose2d(48, 33, Math.PI))
-                .strafeToConstantHeading(new Vector2d(12, 60))
-                .strafeToConstantHeading(new Vector2d(-48, 60))
-                .strafeToConstantHeading(new Vector2d(-55, 34));
-        TrajectoryActionBuilder fTrajEnd = myBot.getDrive().actionBuilder(new Pose2d(-55, 34, Math.PI))
-                .strafeToConstantHeading(new Vector2d(-48, 60))
-                .strafeToConstantHeading(new Vector2d(12, 60))
-                .strafeToConstantHeading(new Vector2d(48, 33));
+//        TrajectoryActionBuilder fTraj = myBot.getDrive().actionBuilder(new Pose2d(48, 33, Math.PI))
+//                .strafeToConstantHeading(new Vector2d(12, 60))
+//                .strafeToConstantHeading(new Vector2d(-48, 60))
+//                .strafeToConstantHeading(new Vector2d(-55, 34));
+//        TrajectoryActionBuilder fTrajEnd = myBot.getDrive().actionBuilder(new Pose2d(-55, 34, Math.PI))
+//                .strafeToConstantHeading(new Vector2d(-48, 60))
+//                .strafeToConstantHeading(new Vector2d(12, 60))
+//                .strafeToConstantHeading(new Vector2d(48, 33));
 
         myBot.runAction(new SequentialAction(
-                trajStart.build(),
-                trajBackdrop.build(),
-                fTraj.build(),
-                fTrajEnd.build()
+                trajStart.build()
+//                trajBackdrop.build()
+//                fTraj.build(),
+//                fTrajEnd.build()
         ));
 
         return myBot;
@@ -215,6 +219,7 @@ public class MeepMeepTesting {
                 trajStart = myBot.getDrive()
                         .actionBuilder(new Pose2d(12, -60, Math.toRadians(270)))
                         .strafeToLinearHeading(new Vector2d(14, -34), 0);
+
                 trajBackdrop = myBot.getDrive().actionBuilder(new Pose2d(14, -34, 0))
                         .strafeToLinearHeading(new Vector2d(48, -33), Math.toRadians(180));
 

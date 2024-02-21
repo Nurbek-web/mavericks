@@ -42,8 +42,8 @@ import java.util.ArrayList;
 
 
 @Config
-@Autonomous(name = "BlueFarCycleAuto \uD83D\uDD35", group = "Autonomous")
-public class BlueFarCycleAuto extends LinearOpMode {
+@Autonomous(name = "BlueCloseAuto \uD83D\uDD35", group = "Autonomous")
+public class BlueCloseAuto extends LinearOpMode {
     private final RobotHardware robot = RobotHardware.getInstance();
     BasicPipeline pipeline = new BasicPipeline();
     OpenCvCamera camera;
@@ -222,47 +222,45 @@ public class BlueFarCycleAuto extends LinearOpMode {
         waitForStart();
 
         telemetry.addLine("STARTED");
-        blueFar(drive, loc);
+        blueNear(drive, loc);
 
     }
 
-    private void blueFar(MecanumDrive drive, Location loc) {
+    private void blueNear(MecanumDrive drive, Location loc) {
 
         TrajectoryActionBuilder trajStart, trajBackdrop;
 
         switch(loc){
             case RIGHT: // right
-                trajStart = drive.actionBuilder(new Pose2d(-34, 60, Math.toRadians(90)))
-                        .strafeToLinearHeading(new Vector2d(-38, 45), Math.toRadians(45))
-                        .strafeToLinearHeading(new Vector2d(-36, 34), Math.toRadians(0))
-                        .strafeToLinearHeading(new Vector2d(-41, 34), Math.toRadians(0))
-                        .strafeToLinearHeading(new Vector2d(-36, 34), Math.toRadians(0));
-                trajBackdrop = drive.actionBuilder(new Pose2d(-36, 34, Math.toRadians(0)))
-                        .strafeToConstantHeading(new Vector2d(-34, 57))
-                        .strafeToConstantHeading(new Vector2d(12, 57))
-                        .splineToLinearHeading(new Pose2d(37.8, 28.5, Math.toRadians(180)), 0);
+                trajStart = drive
+                        .actionBuilder(new Pose2d(12, 60, Math.toRadians(90)))
+                        .strafeToLinearHeading(new Vector2d(12, 34), 0)
+                        .strafeToConstantHeading(new Vector2d(8, 34))
+                        .strafeToConstantHeading(new Vector2d(12, 34));
+                trajBackdrop = drive.actionBuilder(new Pose2d(12, 34, 0))
+                        .splineToSplineHeading(new Pose2d(48, 33, Math.PI), 0);
 
                 break;
             case CENTER: // center
-                trajStart = drive.actionBuilder(new Pose2d(-34, 60, Math.toRadians(90)))
-                        .strafeToConstantHeading(new Vector2d(-34, 30))
-                        .strafeToConstantHeading(new Vector2d(-34, 35));
-                trajBackdrop = drive.actionBuilder(new Pose2d(-34, 35, Math.toRadians(90)))
-                        .strafeToConstantHeading(new Vector2d(-34, 57))
-                        .strafeToConstantHeading(new Vector2d(12, 57))
-                        .splineToLinearHeading(new Pose2d(37.8, 35.5, Math.toRadians(180)), 0);
+                trajStart = drive
+                        .actionBuilder(new Pose2d(12, 60, Math.toRadians(90)))
+                        .strafeToConstantHeading(new Vector2d(12, 30))
+                        .strafeToConstantHeading(new Vector2d(12, 34));
+                trajBackdrop = drive.actionBuilder(new Pose2d(12, 34, Math.toRadians(90)))
+                        .strafeToConstantHeading(new Vector2d(20, 33))
+                        .splineToSplineHeading(new Pose2d(48, 33, Math.PI), 0);
+
                 break;
             case LEFT: // left
                 telemetry.addLine("LEFT");
-                trajStart = drive.actionBuilder(new Pose2d(-34, 60, Math.toRadians(90)))
-                        .lineToY(46).strafeToLinearHeading(new Vector2d(-34, 30), Math.toRadians(180))
-                        .strafeToLinearHeading(new Vector2d(-27.5, 30), Math.toRadians(180))
-                        .strafeToLinearHeading(new Vector2d(-34, 30), Math.toRadians(180));
-                trajBackdrop = drive.actionBuilder(new Pose2d(
-                                -34, 30, Math.toRadians(180)))
-                        .strafeToConstantHeading(new Vector2d(-34, 57))
-                        .strafeToConstantHeading(new Vector2d(12, 57))
-                        .splineToConstantHeading(new Vector2d(37.8, 45.5), 0);
+                trajStart = drive
+                        .actionBuilder(new Pose2d(12, 60, Math.toRadians(90)))
+                        .strafeToLinearHeading(new Vector2d(14, 34), Math.toRadians(180))
+                        .strafeToConstantHeading(new Vector2d(18, 34))
+                        .strafeToConstantHeading(new Vector2d(14, 34));
+                trajBackdrop = drive.actionBuilder(new Pose2d(14, 34, Math.toRadians(180)))
+                        .strafeToLinearHeading(new Vector2d(20, 45), Math.toRadians(135))
+                        .strafeToLinearHeading(new Vector2d(48, 33), Math.toRadians(180));
                 break;
             default:
                 throw new Error("Unknown team prop position");

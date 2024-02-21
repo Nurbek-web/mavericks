@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.vision;
+package org.firstinspires.ftc.teamcode.vision.sim;
 
 import org.opencv.core.*;
 import org.opencv.core.Mat;
@@ -14,42 +14,42 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 // have JunctionPipeline return an x coordinate and a y coordinate in a list, maybe?
 
-public class PropPipeline extends OpenCvPipeline {
-    Telemetry telemetry;
+public class BasicPipeline extends OpenCvPipeline {
 
-    public PropPipeline(Telemetry telemetry) {
-        this.telemetry = telemetry;
-    }
-
-
-    public Scalar darkestJunctions = new Scalar(0, 167, 85);
-    public Scalar lightestJunctions = new Scalar(255, 255, 128);
+    public Scalar darkestJunctions = new Scalar(80, 100, 100);
+    public Scalar lightestJunctions = new Scalar(120, 255, 255);
     public double smallestArea = 4000;
     List<Mat> channels = new ArrayList<>();
-    Mat rawYCrCb = new Mat();
-    Mat blurred = new Mat();
+    Mat rawHSV = new Mat();
+    Mat blurredHSV = new Mat();
     Mat blueMat = new Mat();
     Mat thresholded = new Mat();
     int junctionNumAttr = 0;
     Point junctionPointAttr = new Point();
     double junctionDistanceAttr = 0;
-    double propAreaAttr;
+    double propAreaAttr = 0;
 
     public Mat processFrame(Mat input) {
+        // on middle spike mark x = 300. don't think it'll be more than 350
+        // on right spike value is 800
+        // right between middle and right is 636. possible boundary.
+        // TODO: crop the image
+        // TODO: log images for debugging
+
 
         // crop out parts we're not concerned about
 
         // Convert image to HSV
-        Imgproc.cvtColor(input, rawYCrCb, Imgproc.COLOR_RGB2YCrCb);
+        Imgproc.cvtColor(input, rawHSV, Imgproc.COLOR_RGB2HSV);
+
 
         // Blur image to lessen noise
-        Imgproc.GaussianBlur(rawYCrCb, blurred, new Size(15, 15), 0); // increase blur?
+        Imgproc.GaussianBlur(rawHSV, blurredHSV, new Size(15, 15), 0); // increase blur?
 
-        Core.inRange(blurred, darkestJunctions, lightestJunctions, thresholded);
+        Core.inRange(blurredHSV, darkestJunctions, lightestJunctions, thresholded);
 
         /*
         Core.split(input, channels);
@@ -85,15 +85,6 @@ public class PropPipeline extends OpenCvPipeline {
             propAreaAttr = Imgproc.contourArea(biggestContour);
             junctionDistanceAttr = 240000/Imgproc.contourArea(biggestContour);
             junctionPointAttr = junctionPoint;
-
-            telemetry.addLine("Place the purple pixel between the second and third compliant wheels from the left.");
-            telemetry.addLine("It should be roughly centered.  It should be as close to touching the ground as possible WITHOUT touching the ground.");
-            telemetry.addLine("Ensure the intake is at the bottom of its backlash-induced free-spinning zone so the pixel doesn't scrape the ground.");
-            telemetry.addLine("The pan should be FULLY ON THE GROUND when the program starts.");
-            telemetry.addData("Prop x value: ", getJunctionPoint().x);
-            telemetry.addData("Prop area: ", getPropAreaAttr());
-
-            telemetry.update();
         }
 
         Imgproc.drawContours(input, contours, -1, new Scalar(0,255,0), 3);
@@ -105,9 +96,8 @@ public class PropPipeline extends OpenCvPipeline {
     public Point getJunctionPoint() {
         return junctionPointAttr;
     }
-
-    public int getJunctionNum() {return junctionNumAttr;}
     public double getPropAreaAttr() {return propAreaAttr;}
+    public int getJunctionNum() {return junctionNumAttr;}
     public double getJunctionDistance() {
         return junctionDistanceAttr; // this is in inches
     }

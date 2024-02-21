@@ -358,8 +358,10 @@ public class RobotHardware {
 
     public void startCamera() {
         aprilTag = new AprilTagProcessor.Builder()
-                // calibrated using 3DF Zephyr 7.021
-                .setLensIntrinsics(549.651, 549.651, 317.108, 236.644)
+                .setDrawTagID(true)
+                .setDrawTagOutline(true)
+                .setDrawAxes(true)
+                .setDrawCubeProjection(true)
                 .build();
 
         visionPortal = new VisionPortal.Builder()
@@ -367,8 +369,12 @@ public class RobotHardware {
                 .setCameraResolution(new Size(640, 480))
                 .setStreamFormat(VisionPortal.StreamFormat.MJPEG)
                 .addProcessor(aprilTag)
-                .enableLiveView(false)
+                .enableLiveView(true)
                 .build();
+
+//        FtcDashboard.getInstance().startCameraStream(aprilTag, 0);
+
+
     }
 
     public VisionPortal.CameraState getCameraState() {

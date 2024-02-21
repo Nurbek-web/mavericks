@@ -28,6 +28,7 @@ import org.firstinspires.ftc.teamcode.common.subsystem.LiftSubsystem;
 import org.firstinspires.ftc.teamcode.common.vision.Location;
 import org.firstinspires.ftc.teamcode.vision.BasicPipeline;
 import org.firstinspires.ftc.vision.VisionPortal;
+import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
@@ -158,6 +159,7 @@ public class TestAuto extends LinearOpMode {
     private void blueFar(MecanumDrive drive, Location loc) {
 
         TrajectoryActionBuilder trajStart, trajBackdrop;
+        AprilTagPoseFtc aPose;
 
         switch(loc){
             case RIGHT: // right
@@ -170,6 +172,8 @@ public class TestAuto extends LinearOpMode {
                         .strafeToConstantHeading(new Vector2d(-34, 57))
                         .strafeToConstantHeading(new Vector2d(12, 57))
                         .splineToLinearHeading(new Pose2d(37.8, 28.5, Math.toRadians(180)), 0);
+                aPose = robot.getAprilTagPosition(Location.RIGHT);
+
                 break;
             case CENTER: // center
                 trajStart = drive.actionBuilder(new Pose2d(-34, 60, Math.toRadians(90)))

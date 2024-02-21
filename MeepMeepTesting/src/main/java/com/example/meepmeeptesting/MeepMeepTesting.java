@@ -17,7 +17,7 @@ enum Route {
 }
 
 public class MeepMeepTesting {
-    public static final Route ROUTE = Route.BLUE_FAR;
+    public static final Route ROUTE = Route.BLUE_NEAR;
 
     public static final double DELAY = 0.5;
     public static final double MAX_VEL = 60;

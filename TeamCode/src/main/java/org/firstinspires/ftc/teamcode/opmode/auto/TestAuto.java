@@ -11,27 +11,34 @@ import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
-import com.acmerobotics.roadrunner.VelConstraint;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.common.hardware.Globals;
 import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
 import org.firstinspires.ftc.teamcode.common.subsystem.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.common.subsystem.LiftSubsystem;
+import org.firstinspires.ftc.teamcode.common.vision.AprilTagDetectionPipeline;
 import org.firstinspires.ftc.teamcode.common.vision.Location;
-import org.firstinspires.ftc.teamcode.vision.BasicPipeline;
+import org.firstinspires.ftc.teamcode.vision.sim.BasicPipeline;
 import org.firstinspires.ftc.vision.VisionPortal;
+import org.openftc.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
+
+import java.util.ArrayList;
 
 
 @Config
@@ -46,16 +53,79 @@ public class TestAuto extends LinearOpMode {
     //    PropPipeline propPipeline;
     VisionPortal portal;
     Location randomization;
+    double fx = 578.272;
+    double fy = 578.272;
+    double cx = 402.145;
+    double cy = 221.506;
+    private ElapsedTime runtime = new ElapsedTime();
+
+    // UNITS ARE METERS
+    //Converted from 2 inches
+    //TODO: To be tested (tag size)
+    double tagsize = 0.051;
+    Location givenTag;
 
     LiftSubsystem lift;
     IntakeSubsystem intake;
     Location loc;
+    MecanumDrive drive;
     public class Sleep implements Action {
         @Override
         public boolean run(@NonNull TelemetryPacket packet) {
             autoServo.setPosition(0.68);
             sleep(4000);
             return false;
+        }
+    }
+
+    public class AprilTagAlign implements Action {
+        @Override
+        public boolean run(@NonNull TelemetryPacket packet) {
+            boolean tagFound = false;
+
+            AprilTagDetectionPipeline aprilTagDetectionPipeline;
+            aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
+
+            org.openftc.apriltag.AprilTagDetection tagOfInterest = null;
+
+            camera.setPipeline(aprilTagDetectionPipeline);
+
+            ArrayList<AprilTagDetection> currentDetections;
+            runtime.reset();
+            while (!tagFound && runtime.seconds() <= 5.0)
+            {
+                currentDetections = aprilTagDetectionPipeline.getLatestDetections();
+
+                for(org.openftc.apriltag.AprilTagDetection tag : currentDetections)
+                {
+                    if((loc==Location.LEFT && (tag.id==1 || tag.id==4))
+                            || (loc==Location.CENTER && (tag.id==2 || tag.id==5))
+                            || (loc==Location.RIGHT && (tag.id==3 || tag.id==6)))
+                    {
+                        tagFound = true;
+                        tagOfInterest = tag;
+                        break;
+                    }
+                }
+            }
+            if (tagFound) {
+                drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
+
+                double x = tagOfInterest.pose.x - 0.095;
+                double xperInch = 40;
+
+                TrajectoryActionBuilder trajApril;
+                trajApril = drive.actionBuilder(new Pose2d(0, 0, 0))
+                        .strafeToConstantHeading(new Vector2d(0, xperInch * x));
+                Actions.runBlocking(new SequentialAction(
+                        trajApril.build()
+                ));
+            }
+            Actions.runBlocking(new SequentialAction(
+                    new LiftUp()
+            ));
+            return true;
+
         }
     }
 
@@ -104,44 +174,6 @@ public class TestAuto extends LinearOpMode {
         }
     }
 
-    public class IntakePixels implements Action {
-        // checks if the lift motor has been powered on
-        private boolean initialized = false;
-
-        // actions are formatted via telemetry packets as below
-        @Override
-        public boolean run(@NonNull TelemetryPacket packet) {
-            // powers on motor, if it is not on
-            if (!initialized) {
-                robot.intakeServo.setPosition(0.34);
-                robot.intakeRoller.setPower(0.8);
-                robot.intakeMotor.setPower(0.8);
-
-                initialized = true;
-            }
-
-            // checks lift's current position
-            double pos = robot.liftMotor.getCurrentPosition();
-            packet.put("liftPos", pos);
-
-            if (pos < 1550) {
-                // true causes the action to rerun
-                return true;
-            } else {
-                // false stops action rerun
-                robot.liftMotor.setPower(0);
-                lift.extend1Outtake();
-                sleep(1000);
-                lift.openOuttake();
-
-                sleep(2000);
-                return false;
-            }
-            // overall, the action powers the lift until it surpasses
-            // 3000 encoder ticks, then powers it off
-        }
-    }
-
 
     @Override
     public void runOpMode() {
@@ -164,11 +196,11 @@ public class TestAuto extends LinearOpMode {
 
         sleep(3500);
 
-        if (pipeline.getJunctionPoint().x < 170) {
+        if (pipeline.getJunctionPoint().x < 330) {
             telemetry.addLine("LEFT PROP");
             loc = Location.LEFT;
         }
-        else if (pipeline.getJunctionPoint().x > 750) {
+        else if (pipeline.getJunctionPoint().x > 850) {
             loc = Location.RIGHT;
             telemetry.addLine("RIGHT PROP");
         } else {
@@ -180,6 +212,7 @@ public class TestAuto extends LinearOpMode {
         robot.init(hardwareMap);
         MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(-34, 60, Math.toRadians(90)));
         lift = new LiftSubsystem();
+
         autoServo = hardwareMap.get(Servo.class, "autoServo");
         robot.liftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         autoServo.setPosition(1);
@@ -196,73 +229,54 @@ public class TestAuto extends LinearOpMode {
     private void blueFar(MecanumDrive drive, Location loc) {
 
         TrajectoryActionBuilder trajStart, trajBackdrop;
-        AprilTagPoseFtc aPose;
 
         switch(loc){
             case RIGHT: // right
                 trajStart = drive.actionBuilder(new Pose2d(-34, 60, Math.toRadians(90)))
                         .strafeToLinearHeading(new Vector2d(-38, 45), Math.toRadians(45))
-                        .strafeToLinearHeading(new Vector2d(-36, 34), 0)
-                        .splineToSplineHeading(new Pose2d(-41, 34, 0), Math.PI)
-                        .splineToSplineHeading(new Pose2d(-36, 34, 0), Math.toRadians(0));
+                        .strafeToLinearHeading(new Vector2d(-36, 34), Math.toRadians(0))
+                        .strafeToLinearHeading(new Vector2d(-41, 34), Math.toRadians(0))
+                        .strafeToLinearHeading(new Vector2d(-36, 34), Math.toRadians(0));
                 trajBackdrop = drive.actionBuilder(new Pose2d(-36, 34, Math.toRadians(0)))
-                        .strafeToSplineHeading(new Vector2d(-34, 54), Math.PI/2)
-                        .splineToConstantHeading(new Vector2d(-12, 58), 0)
-                        .splineToConstantHeading(new Vector2d(15, 58), 0)
-                        .splineToSplineHeading(new Pose2d(48, 33, Math.PI), Math.toRadians(0));
+                        .strafeToConstantHeading(new Vector2d(-34, 57))
+                        .strafeToConstantHeading(new Vector2d(12, 57))
+                        .splineToLinearHeading(new Pose2d(37.8, 28.5, Math.toRadians(180)), 0);
+
                 break;
             case CENTER: // center
                 trajStart = drive.actionBuilder(new Pose2d(-34, 60, Math.toRadians(90)))
                         .strafeToConstantHeading(new Vector2d(-34, 30))
-                        .strafeToConstantHeading(new Vector2d(-34, 34));
-                trajBackdrop = drive.actionBuilder(new Pose2d(-34, 34, Math.toRadians(90)))
-//                        .strafeToConstantHeading(new Vector2d(-34, 60))
-//                        .strafeToConstantHeading(new Vector2d(12, 60))
-//                        .splineToLinearHeading(new Pose2d(48, 33, Math.toRadians(180)), 0);
-                        .strafeToSplineHeading(new Vector2d(-34, 54), Math.PI/2)
-                        .splineToConstantHeading(new Vector2d(-12, 58), 0)
-                        .splineToConstantHeading(new Vector2d(15, 58), 0)
-                        .splineToSplineHeading(new Pose2d(48, 33, Math.PI), Math.toRadians(0));
+                        .strafeToConstantHeading(new Vector2d(-34, 35));
+                trajBackdrop = drive.actionBuilder(new Pose2d(-34, 35, Math.toRadians(90)))
+                        .strafeToConstantHeading(new Vector2d(-34, 57))
+                        .strafeToConstantHeading(new Vector2d(12, 57))
+                        .splineToLinearHeading(new Pose2d(37.8, 35.5, Math.toRadians(180)), 0);
                 break;
             case LEFT: // left
+                telemetry.addLine("LEFT");
                 trajStart = drive.actionBuilder(new Pose2d(-34, 60, Math.toRadians(90)))
-                        .lineToY(46)
-                        .strafeToLinearHeading(new Vector2d(-34, 30), Math.toRadians(180))
+                        .lineToY(46).strafeToLinearHeading(new Vector2d(-34, 30), Math.toRadians(180))
                         .strafeToLinearHeading(new Vector2d(-27.5, 30), Math.toRadians(180))
                         .strafeToLinearHeading(new Vector2d(-34, 30), Math.toRadians(180));
-                trajBackdrop = drive.actionBuilder(new Pose2d(-34, 30, Math.toRadians(180)))
-                        .strafeToSplineHeading(new Vector2d(-34, 54), Math.PI/2)
-                        .splineToConstantHeading(new Vector2d(-12, 58), 0)
-                        .splineToConstantHeading(new Vector2d(15, 58), 0)
-                        .splineToSplineHeading(new Pose2d(48, 33, Math.PI), Math.toRadians(0));
+                trajBackdrop = drive.actionBuilder(new Pose2d(
+                                -34, 30, Math.toRadians(180)))
+                        .strafeToConstantHeading(new Vector2d(-34, 57))
+                        .strafeToConstantHeading(new Vector2d(12, 57))
+                        .splineToConstantHeading(new Vector2d(37.8, 45.5), 0);
                 break;
             default:
                 throw new Error("Unknown team prop position");
         }
 
-        TrajectoryActionBuilder fTraj = drive.actionBuilder(new Pose2d(48, 33, Math.PI))
-                .splineToConstantHeading(new Vector2d(12, 60), Math.PI)
-                .strafeToConstantHeading(new Vector2d(-48, 60))
-                .splineToConstantHeading(new Vector2d(-55, 34), Math.PI/2);
-        TrajectoryActionBuilder fTrajEnd = drive.actionBuilder(new Pose2d(-55, 34, Math.PI))
-                .strafeToConstantHeading(new Vector2d(-55, 60))
-                .strafeToConstantHeading(new Vector2d(12, 60))
-                .splineToConstantHeading(new Vector2d(48, 33), 0);
-
-
         Actions.runBlocking(new SequentialAction(
-                trajStart.build(),
-                new DropPixel(),
-                trajBackdrop.build(),
-                new LiftUp(),
-                fTraj.build(),
-                //
-                fTrajEnd.build(),
-                new LiftUp()
-            )
-
-        );
-
+                        trajStart.build(),
+                        new DropPixel(),
+                        trajBackdrop.build(),
+                        new AprilTagAlign(),
+                        new LiftUp()
+        ));
     }
+
+
 
 }

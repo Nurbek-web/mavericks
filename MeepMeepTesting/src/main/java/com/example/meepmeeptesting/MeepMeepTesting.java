@@ -17,7 +17,7 @@ enum Route {
 }
 
 public class MeepMeepTesting {
-    public static final Route ROUTE = Route.BLUE_NEAR;
+    public static final Route ROUTE = Route.RED_NEAR;
 
     public static final double DELAY = 0.5;
     public static final double MAX_VEL = 60;
@@ -207,7 +207,7 @@ public class MeepMeepTesting {
                         .strafeToLinearHeading(new Vector2d(14, -34), Math.toRadians(180));
                 trajBackdrop = myBot.getDrive().actionBuilder(new Pose2d(14, -34, Math.toRadians(180)))
                         .strafeToConstantHeading(new Vector2d(14, -50))
-                        .splineToConstantHeading(new Vector2d(48, -34), 0).waitSeconds(1);
+                        .splineToConstantHeading(new Vector2d(40, -32), 0).waitSeconds(1);
 //                        .strafeToConstantHeading(new Vector2d(35, -44))
 //                        .strafeToConstantHeading(new Vector2d(48, -33));
                 break;
@@ -265,7 +265,7 @@ public class MeepMeepTesting {
 
 
         TrajectoryActionBuilder trajStart, trajBackdrop;
-        int propPosition = 2;
+        int propPosition = 0;
 
         switch(propPosition){
             case 0: // right

@@ -277,6 +277,55 @@ public class TestAuto extends LinearOpMode {
         ));
     }
 
+    private void redFar(MecanumDrive drive, Location loc) {
+
+        TrajectoryActionBuilder trajStart, trajBackdrop;
+
+        switch(loc){
+            case RIGHT: // right
+                trajStart = drive.actionBuilder(new Pose2d(-34, -60, Math.toRadians(270)))
+                        .strafeToLinearHeading(new Vector2d(-36, -34), Math.toRadians(180))
+                        .strafeToConstantHeading(new Vector2d(-32, -34))
+                        .strafeToConstantHeading(new Vector2d(-36, -34));
+                trajBackdrop = drive.actionBuilder(new Pose2d(-36, 34, Math.toRadians(0)))
+                        .strafeToConstantHeading(new Vector2d(-34, 57))
+                        .strafeToConstantHeading(new Vector2d(12, 57))
+                        .splineToLinearHeading(new Pose2d(37.8, 28.5, Math.toRadians(180)), 0);
+
+                break;
+            case CENTER: // center
+                trajStart = drive.actionBuilder(new Pose2d(-34, 60, Math.toRadians(90)))
+                        .strafeToConstantHeading(new Vector2d(-34, 30))
+                        .strafeToConstantHeading(new Vector2d(-34, 35));
+                trajBackdrop = drive.actionBuilder(new Pose2d(-34, 35, Math.toRadians(90)))
+                        .strafeToConstantHeading(new Vector2d(-34, 57))
+                        .strafeToConstantHeading(new Vector2d(12, 57))
+                        .splineToLinearHeading(new Pose2d(37.8, 35.5, Math.toRadians(180)), 0);
+                break;
+            case LEFT: // left
+                telemetry.addLine("LEFT");
+                trajStart = drive.actionBuilder(new Pose2d(-34, 60, Math.toRadians(90)))
+                        .lineToY(46).strafeToLinearHeading(new Vector2d(-34, 30), Math.toRadians(180))
+                        .strafeToLinearHeading(new Vector2d(-27.5, 30), Math.toRadians(180))
+                        .strafeToLinearHeading(new Vector2d(-34, 30), Math.toRadians(180));
+                trajBackdrop = drive.actionBuilder(new Pose2d(
+                                -34, 30, Math.toRadians(180)))
+                        .strafeToConstantHeading(new Vector2d(-34, 57))
+                        .strafeToConstantHeading(new Vector2d(12, 57))
+                        .splineToConstantHeading(new Vector2d(37.8, 45.5), 0);
+                break;
+            default:
+                throw new Error("Unknown team prop position");
+        }
+
+        Actions.runBlocking(new SequentialAction(
+                trajStart.build(),
+                new DropPixel(),
+                trajBackdrop.build(),
+                new AprilTagAlign(),
+                new LiftUp()
+        ));
+    }
 
 
 }

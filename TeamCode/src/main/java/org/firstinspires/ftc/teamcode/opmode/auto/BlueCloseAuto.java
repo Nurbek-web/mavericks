@@ -229,7 +229,8 @@ public class BlueCloseAuto extends LinearOpMode {
     private void blueNear(MecanumDrive drive, Location loc) {
 
         TrajectoryActionBuilder trajStart, trajBackdrop;
-
+        
+        Vector2d startingPosition;
         switch(loc){
             case RIGHT: // right
                 trajStart = drive
@@ -238,8 +239,8 @@ public class BlueCloseAuto extends LinearOpMode {
                         .strafeToConstantHeading(new Vector2d(8, 34))
                         .strafeToConstantHeading(new Vector2d(12, 34));
                 trajBackdrop = drive.actionBuilder(new Pose2d(12, 34, 0))
-                        .splineToSplineHeading(new Pose2d(40, 28.5, Math.PI), 0);
-
+                        .splineToSplineHeading(new Pose2d(37.8, 28.5, Math.PI), 0);
+                startingPosition = new Vector2d(37.8, 28.5);
                 break;
             case CENTER: // center
                 trajStart = drive
@@ -248,11 +249,11 @@ public class BlueCloseAuto extends LinearOpMode {
                         .strafeToConstantHeading(new Vector2d(12, 34));
                 trajBackdrop = drive.actionBuilder(new Pose2d(12, 34, Math.toRadians(90)))
                         .strafeToConstantHeading(new Vector2d(20, 33))
-                        .splineToSplineHeading(new Pose2d(40, 35.5, Math.PI), 0);
+                        .splineToSplineHeading(new Pose2d(37.8, 35.5, Math.PI), 0);
+                startingPosition = new Vector2d(37.8, 35.5);
 
                 break;
             case LEFT: // left
-                telemetry.addLine("LEFT");
                 trajStart = drive
                         .actionBuilder(new Pose2d(12, 60, Math.toRadians(90)))
                         .strafeToLinearHeading(new Vector2d(14, 34), Math.toRadians(180))
@@ -260,7 +261,9 @@ public class BlueCloseAuto extends LinearOpMode {
                         .strafeToConstantHeading(new Vector2d(14, 34));
                 trajBackdrop = drive.actionBuilder(new Pose2d(14, 34, Math.toRadians(180)))
                         .strafeToLinearHeading(new Vector2d(20, 45), Math.toRadians(135))
-                        .strafeToLinearHeading(new Vector2d(40, 45.5), Math.toRadians(180));
+                        .strafeToLinearHeading(new Vector2d(37.8, 45.5), Math.toRadians(180));
+                startingPosition = new Vector2d(37.8, 45.5);
+
                 break;
             default:
                 throw new Error("Unknown team prop position");

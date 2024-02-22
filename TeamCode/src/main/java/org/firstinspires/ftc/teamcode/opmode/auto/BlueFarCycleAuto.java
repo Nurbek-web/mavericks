@@ -272,8 +272,7 @@ public class BlueFarCycleAuto extends LinearOpMode {
                 trajStart.build(),
                 new DropPixel(),
                 trajBackdrop.build(),
-                new AprilTagAlign(),
-                new LiftUp()
+                new AprilTagAlign()
         ));
     }
 

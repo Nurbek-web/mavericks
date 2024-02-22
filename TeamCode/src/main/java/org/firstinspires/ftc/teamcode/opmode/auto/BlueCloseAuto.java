@@ -210,7 +210,7 @@ public class BlueCloseAuto extends LinearOpMode {
 
         telemetry.update();
         robot.init(hardwareMap);
-        MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(-34, 60, Math.toRadians(90)));
+        MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(12, 60, Math.toRadians(90)));
         lift = new LiftSubsystem();
 
         autoServo = hardwareMap.get(Servo.class, "autoServo");
@@ -238,7 +238,7 @@ public class BlueCloseAuto extends LinearOpMode {
                         .strafeToConstantHeading(new Vector2d(8, 34))
                         .strafeToConstantHeading(new Vector2d(12, 34));
                 trajBackdrop = drive.actionBuilder(new Pose2d(12, 34, 0))
-                        .splineToSplineHeading(new Pose2d(48, 33, Math.PI), 0);
+                        .splineToSplineHeading(new Pose2d(40, 28.5, Math.PI), 0);
 
                 break;
             case CENTER: // center
@@ -248,7 +248,7 @@ public class BlueCloseAuto extends LinearOpMode {
                         .strafeToConstantHeading(new Vector2d(12, 34));
                 trajBackdrop = drive.actionBuilder(new Pose2d(12, 34, Math.toRadians(90)))
                         .strafeToConstantHeading(new Vector2d(20, 33))
-                        .splineToSplineHeading(new Pose2d(48, 33, Math.PI), 0);
+                        .splineToSplineHeading(new Pose2d(40, 35.5, Math.PI), 0);
 
                 break;
             case LEFT: // left
@@ -260,7 +260,7 @@ public class BlueCloseAuto extends LinearOpMode {
                         .strafeToConstantHeading(new Vector2d(14, 34));
                 trajBackdrop = drive.actionBuilder(new Pose2d(14, 34, Math.toRadians(180)))
                         .strafeToLinearHeading(new Vector2d(20, 45), Math.toRadians(135))
-                        .strafeToLinearHeading(new Vector2d(48, 33), Math.toRadians(180));
+                        .strafeToLinearHeading(new Vector2d(40, 45.5), Math.toRadians(180));
                 break;
             default:
                 throw new Error("Unknown team prop position");
@@ -270,8 +270,7 @@ public class BlueCloseAuto extends LinearOpMode {
                 trajStart.build(),
                 new DropPixel(),
                 trajBackdrop.build(),
-                new AprilTagAlign(),
-                new LiftUp()
+                new AprilTagAlign()
         ));
     }
 

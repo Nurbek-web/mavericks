@@ -76,16 +76,18 @@ public class MeepMeepTesting {
                 .build();
 
         TrajectoryActionBuilder trajBackdrop, trajStart;
-        int propPosition = 0;
+        int propPosition = 1;
         switch(propPosition){
             case 0: // right
-                trajStart = myBot.getDrive()
-                        .actionBuilder(new Pose2d(12, 60, Math.toRadians(90)))
-                        .strafeToLinearHeading(new Vector2d(12, 34), 0)
-                        .strafeToConstantHeading(new Vector2d(8, 34))
-                        .strafeToConstantHeading(new Vector2d(12, 34));
-                trajBackdrop = myBot.getDrive().actionBuilder(new Pose2d(12, 34, 0))
-                        .splineToSplineHeading(new Pose2d(48, 33, Math.PI), 0);
+                trajStart = myBot.getDrive().actionBuilder(new Pose2d(-34, 60, Math.toRadians(90)))
+                        .strafeToLinearHeading(new Vector2d(-38, 45), Math.toRadians(45))
+                        .strafeToLinearHeading(new Vector2d(-36, 34), Math.toRadians(0))
+                        .strafeToLinearHeading(new Vector2d(-41, 34), Math.toRadians(0))
+                        .strafeToLinearHeading(new Vector2d(-36, 34), Math.toRadians(0));
+                trajBackdrop = myBot.getDrive().actionBuilder(new Pose2d(-36, 34, Math.toRadians(0)))
+                        .strafeToConstantHeading(new Vector2d(-34, 57))
+                        .strafeToConstantHeading(new Vector2d(12, 57))
+                        .splineToLinearHeading(new Pose2d(37.8, 28.5, Math.toRadians(180)), 0);
                 break;
             case 1: // center
                 trajStart = myBot.getDrive()

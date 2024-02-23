@@ -30,6 +30,7 @@ import org.firstinspires.ftc.teamcode.common.subsystem.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.common.subsystem.LiftSubsystem;
 import org.firstinspires.ftc.teamcode.common.vision.AprilTagDetectionPipeline;
 import org.firstinspires.ftc.teamcode.common.vision.Location;
+import org.firstinspires.ftc.teamcode.common.vision.RedPipeline;
 import org.firstinspires.ftc.teamcode.vision.sim.BasicPipeline;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.openftc.apriltag.AprilTagDetection;
@@ -42,10 +43,10 @@ import java.util.ArrayList;
 
 
 @Config
-@Autonomous(name = "BlueFarAuto \uD83D\uDD35", group = "Autonomous")
-public class BlueFarAuto extends LinearOpMode {
+@Autonomous(name = "RedFARAuto", group = "Autonomous")
+public class RedFarAuto extends LinearOpMode {
     private final RobotHardware robot = RobotHardware.getInstance();
-    BasicPipeline pipeline = new BasicPipeline();
+    RedPipeline pipeline = new RedPipeline(telemetry);
     OpenCvCamera camera;
     FtcDashboard dashboard = FtcDashboard.getInstance();
 
@@ -117,14 +118,14 @@ public class BlueFarAuto extends LinearOpMode {
                 TrajectoryActionBuilder trajApril;
                 if(tagOfInterest.id==3 || tagOfInterest.id==6){
                     trajApril = drive.actionBuilder(new Pose2d(0, 0, 0))
-                            .strafeToConstantHeading(new Vector2d(0, xperInch * x+2));
+                            .strafeToConstantHeading(new Vector2d(0, -xperInch * x+2));
                     Actions.runBlocking(new SequentialAction(
                             trajApril.build()
                     ));
                 }else{
 
                     trajApril = drive.actionBuilder(new Pose2d(0, 0, 0))
-                            .strafeToConstantHeading(new Vector2d(0, xperInch * x));
+                            .strafeToConstantHeading(new Vector2d(0, -xperInch * x));
                     Actions.runBlocking(new SequentialAction(
                             trajApril.build()
                     ));
@@ -133,7 +134,7 @@ public class BlueFarAuto extends LinearOpMode {
             Actions.runBlocking(new SequentialAction(
                     new LiftUp()
             ));
-            return false;
+            return true;
 
         }
     }
@@ -165,7 +166,7 @@ public class BlueFarAuto extends LinearOpMode {
             double pos = robot.liftMotor.getCurrentPosition();
             packet.put("liftPos", pos);
 
-            if (pos < 800) {
+            if (pos < 750) {
                 // true causes the action to rerun
                 return true;
             } else {
@@ -189,7 +190,8 @@ public class BlueFarAuto extends LinearOpMode {
         Globals.IS_AUTO = true;
         // vision here that outputs position
         int visionOutputPosition = 1;
-        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "webka"));
+        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
+        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "webka"), cameraMonitorViewId);
         camera.setPipeline(pipeline);
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
@@ -218,7 +220,7 @@ public class BlueFarAuto extends LinearOpMode {
 
         telemetry.update();
         robot.init(hardwareMap);
-        MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(-35, 60, Math.toRadians(90)));
+        MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(-34, -60, Math.toRadians(270)));
         lift = new LiftSubsystem();
 
         autoServo = hardwareMap.get(Servo.class, "autoServo");
@@ -230,56 +232,49 @@ public class BlueFarAuto extends LinearOpMode {
         waitForStart();
 
         telemetry.addLine("STARTED");
-        blueFar(drive, loc);
+        blueNear(drive, loc);
 
     }
 
-    private void blueFar(MecanumDrive drive, Location loc) {
+    private void blueNear(MecanumDrive drive, Location loc) {
 
         TrajectoryActionBuilder trajStart, trajBackdrop;
 
         Vector2d startingPosition;
         switch(loc){
             case RIGHT: // right
-                trajStart = drive
-                        .actionBuilder(new Pose2d(-35, 60, Math.toRadians(90)))
-
-                        .strafeToConstantHeading(new Vector2d(-35, 37))
-                        .turn(-Math.toRadians(90));
-//                        .strafeToConstantHeading(new Vector2d(5, 37))
-//                        .strafeToConstantHeading(new Vector2d(12, 37));
-                trajBackdrop = drive.actionBuilder(new Pose2d(-36, 37, 0))
-                        .strafeToConstantHeading(new Vector2d(-35, 58))
-                        .turn(Math.toRadians(90))
-                        .strafeToConstantHeading(new Vector2d(20, 57))
-                        .splineToSplineHeading(new Pose2d(37.3, 34, Math.PI), 0);
+                trajStart = drive.actionBuilder(new Pose2d(-34, -60, Math.toRadians(270)))
+                        .strafeToLinearHeading(new Vector2d(-36, -34), Math.toRadians(180))
+                        .strafeToConstantHeading(new Vector2d(-32, -34))
+                        .strafeToConstantHeading(new Vector2d(-36, -34));
+                trajBackdrop = drive.actionBuilder(new Pose2d(-36, -34, Math.toRadians(180)))
+                        .strafeToConstantHeading(new Vector2d(-34, -60))
+                        .strafeToConstantHeading(new Vector2d(27, -60))
+                        .strafeToLinearHeading(new Vector2d(37.8, -45.5), Math.PI);
+                startingPosition = new Vector2d(37.8, -45.5);
                 break;
             case CENTER: // center
-                trajStart = drive
-                        .actionBuilder(new Pose2d(-35, 60, Math.toRadians(90)))
-                        .strafeToConstantHeading(new Vector2d(-35, 30))
-                        .strafeToConstantHeading(new Vector2d(-35, 36));
-                trajBackdrop = drive.actionBuilder(new Pose2d(-35, 36, Math.toRadians(90)))
-                        .strafeToConstantHeading(new Vector2d(-35, 58))
-                        .strafeToConstantHeading(new Vector2d(20, 57))
-                        .splineToSplineHeading(new Pose2d(37.3, 40, Math.PI), 0);
+                trajStart = drive.actionBuilder(new Pose2d(-34, -60, Math.toRadians(270)))
+                        .strafeToConstantHeading(new Vector2d(-34, -30))
+                        .strafeToConstantHeading(new Vector2d(-34, -34));
+                trajBackdrop = drive.actionBuilder(new Pose2d(-34, -34, Math.toRadians(270)))
+                        .strafeToConstantHeading(new Vector2d(-34, -60))
+//                        .strafeToLinearHeading(new Vector2d(37.8, -60))
+                        .splineToSplineHeading(new Pose2d(37.8, -33, Math.PI), 0);
+                startingPosition = new Vector2d(37.8, -33);
 
                 break;
             case LEFT: // left
-                trajStart = drive
-                        .actionBuilder(new Pose2d(-35, 58, Math.toRadians(90)))
-                        .strafeToConstantHeading(new Vector2d(-36, 34))
-                        .turn(Math.toRadians(90))
-                        .strafeToConstantHeading(new Vector2d(-32, 34))
-                        .strafeToConstantHeading(new Vector2d(-34, 34));
-//                        .strafeToConstantHeading(new Vector2d(18, 34))
-//                        .strafeToConstantHeading(new Vector2d(14, 34));
-                trajBackdrop = drive.actionBuilder(new Pose2d(-34, 34, Math.toRadians(180)))
-                        .strafeToConstantHeading(new Vector2d(-36, 34))
-                        .strafeToConstantHeading(new Vector2d(-35, 58))
-                        .turn(-Math.toRadians(90))
-                        .strafeToConstantHeading(new Vector2d(20, 57))
-                        .strafeToLinearHeading(new Vector2d(37.3, 47.5), Math.toRadians(180));
+                trajStart = drive.actionBuilder(new Pose2d(-34, -60, Math.toRadians(270)))
+                        .strafeToLinearHeading(new Vector2d(-34, -34), Math.toRadians(0))
+                        .strafeToConstantHeading(new Vector2d(-38, -34))
+                        .strafeToConstantHeading(new Vector2d(-34, -34));
+                trajBackdrop = drive.actionBuilder(new Pose2d(-34, -34, Math.toRadians(0)))
+                        .strafeToConstantHeading(new Vector2d(-34, -58))
+                        .strafeToConstantHeading(new Vector2d(12, -58))
+                        .splineToSplineHeading(new Pose2d(37.8, -45, Math.PI), 0);
+                startingPosition = new Vector2d(37.8, -45);
+
                 break;
             default:
                 throw new Error("Unknown team prop position");
@@ -287,9 +282,7 @@ public class BlueFarAuto extends LinearOpMode {
 
         Actions.runBlocking(new SequentialAction(
                 trajStart.build(),
-                new DropPixel(),
-                trajBackdrop.build(),
-                new AprilTagAlign()
+                new DropPixel()
         ));
     }
 

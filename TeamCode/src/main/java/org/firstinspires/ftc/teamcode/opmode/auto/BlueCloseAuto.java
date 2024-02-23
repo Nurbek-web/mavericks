@@ -131,7 +131,7 @@ public class BlueCloseAuto extends LinearOpMode {
             Actions.runBlocking(new SequentialAction(
                     new LiftUp()
             ));
-            return true;
+            return false;
 
         }
     }

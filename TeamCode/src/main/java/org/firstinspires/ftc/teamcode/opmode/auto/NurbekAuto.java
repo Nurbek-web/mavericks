@@ -42,8 +42,8 @@ import java.util.ArrayList;
 
 
 @Config
-@Autonomous(name = "BlueFarAuto \uD83D\uDD35", group = "Autonomous")
-public class BlueFarAuto extends LinearOpMode {
+@Autonomous(name = "NurbekAuto \uD83D\uDD35", group = "Autonomous")
+public class NurbekAuto extends LinearOpMode {
     private final RobotHardware robot = RobotHardware.getInstance();
     BasicPipeline pipeline = new BasicPipeline();
     OpenCvCamera camera;
@@ -133,7 +133,7 @@ public class BlueFarAuto extends LinearOpMode {
             Actions.runBlocking(new SequentialAction(
                     new LiftUp()
             ));
-            return false;
+            return true;
 
         }
     }

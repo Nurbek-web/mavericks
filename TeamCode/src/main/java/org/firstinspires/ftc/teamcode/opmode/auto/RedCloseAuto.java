@@ -24,6 +24,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
+import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.Pose;
 import org.firstinspires.ftc.teamcode.common.hardware.Globals;
 import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
 import org.firstinspires.ftc.teamcode.common.subsystem.IntakeSubsystem;
@@ -34,6 +35,7 @@ import org.firstinspires.ftc.teamcode.common.vision.RedPipeline;
 import org.firstinspires.ftc.teamcode.vision.sim.BasicPipeline;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.openftc.apriltag.AprilTagDetection;
+
 import org.firstinspires.ftc.vision.apriltag.AprilTagPoseFtc;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -113,28 +115,20 @@ public class RedCloseAuto extends LinearOpMode {
                 drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
 
                 double x = tagOfInterest.pose.x - 0.095;
+
                 double xperInch = 40;
 
                 TrajectoryActionBuilder trajApril;
-                if(tagOfInterest.id==3 || tagOfInterest.id==6){
                     trajApril = drive.actionBuilder(new Pose2d(0, 0, 0))
-                            .strafeToConstantHeading(new Vector2d(0, xperInch * x+2));
+                            .strafeToLinearHeading(new Vector2d(0, xperInch * x), 0);
                     Actions.runBlocking(new SequentialAction(
                             trajApril.build()
                     ));
-                }else{
-
-                    trajApril = drive.actionBuilder(new Pose2d(0, 0, 0))
-                            .strafeToConstantHeading(new Vector2d(0, xperInch * x));
-                    Actions.runBlocking(new SequentialAction(
-                            trajApril.build()
-                    ));
-                }
             }
             Actions.runBlocking(new SequentialAction(
                     new LiftUp()
             ));
-            return true;
+            return false;
 
         }
     }
@@ -166,14 +160,14 @@ public class RedCloseAuto extends LinearOpMode {
             double pos = robot.liftMotor.getCurrentPosition();
             packet.put("liftPos", pos);
 
-            if (pos < 750) {
+            if (pos < 1100) {
                 // true causes the action to rerun
                 return true;
             } else {
                 // false stops action rerun
                 robot.liftMotor.setPower(0);
                 lift.extend1Outtake();
-                sleep(1000);
+                sleep(1400);
                 lift.openOuttake();
 
                 sleep(2000);
@@ -204,19 +198,7 @@ public class RedCloseAuto extends LinearOpMode {
             }
         });
 
-        sleep(3500);
 
-        if (pipeline.getJunctionPoint().x < 330) {
-            telemetry.addLine("LEFT PROP");
-            loc = Location.LEFT;
-        }
-        else if (pipeline.getJunctionPoint().x > 850) {
-            loc = Location.RIGHT;
-            telemetry.addLine("RIGHT PROP");
-        } else {
-            loc = Location.CENTER;
-            telemetry.addLine("CENTER PROP");
-        }
 
         telemetry.update();
         robot.init(hardwareMap);
@@ -231,12 +213,26 @@ public class RedCloseAuto extends LinearOpMode {
 
         waitForStart();
 
+        sleep(2000);
+
+        if (pipeline.getJunctionPoint().x < 330) {
+            telemetry.addLine("LEFT PROP");
+            loc = Location.LEFT;
+        }
+        else if (pipeline.getJunctionPoint().x > 850) {
+            loc = Location.RIGHT;
+            telemetry.addLine("RIGHT PROP");
+        } else {
+            loc = Location.CENTER;
+            telemetry.addLine("CENTER PROP");
+        }
+
         telemetry.addLine("STARTED");
-        blueNear(drive, loc);
+        redClose(drive, loc);
 
     }
 
-    private void blueNear(MecanumDrive drive, Location loc) {
+    private void redClose(MecanumDrive drive, Location loc) {
 
         TrajectoryActionBuilder trajStart, trajBackdrop;
 
@@ -245,39 +241,41 @@ public class RedCloseAuto extends LinearOpMode {
             case RIGHT: // right
                 trajStart = drive
                         .actionBuilder(new Pose2d(12, -60, Math.toRadians(270)))
-
-                        .strafeToConstantHeading(new Vector2d(12, -37))
-                        .turn(-Math.toRadians(90));
-//                        .strafeToConstantHeading(new Vector2d(5, 37))
-//                        .strafeToConstantHeading(new Vector2d(12, 37));
-                trajBackdrop = drive.actionBuilder(new Pose2d(12, -37, 0))
-                        .strafeToConstantHeading(new Vector2d(12, -50))
+                        .strafeToConstantHeading(new Vector2d(14, -34))
+                        .turn(-Math.toRadians(90))
+                        .strafeToConstantHeading(new Vector2d(18, -34))
+                        .strafeToConstantHeading(new Vector2d(14, -34));
+                trajBackdrop = drive.actionBuilder(new Pose2d(14, -34, Math.toRadians(180)))
+                        .strafeToConstantHeading(new Vector2d(14, -50))
                         .strafeToConstantHeading(new Vector2d(35, -50))
-                        .strafeToConstantHeading(new Vector2d(37.8, -45.5));
+                        .strafeToConstantHeading(new Vector2d(38, -45.5));
                 startingPosition = new Vector2d(37.8, 30);
                 break;
             case CENTER: // center
-                trajStart = drive
-                        .actionBuilder(new Pose2d(12, -60, Math.toRadians(270)))
+                trajStart = drive.actionBuilder(new Pose2d(12, -60, Math.toRadians(270)))
                         .strafeToConstantHeading(new Vector2d(12, -30))
-                        .strafeToConstantHeading(new Vector2d(12, -36));
-                trajBackdrop = drive.actionBuilder(new Pose2d(12, -36, Math.toRadians(270)))
-                        .strafeToConstantHeading(new Vector2d(30, -33))
-                        .splineToSplineHeading(new Pose2d(41.7, -39.5, Math.PI), 0);
+                        .strafeToConstantHeading(new Vector2d(12, -34))
+                ;
+                trajBackdrop = drive.actionBuilder(new Pose2d(12, -34, Math.toRadians(270)))
+                        .strafeToConstantHeading(new Vector2d(20, -34))
+                        .turn(-Math.toRadians(93))
+                        .strafeToConstantHeading(new Vector2d(38, -34.5));
+//                        .splineToSplineHeading(new Pose2d(38, -34.5, Math.PI), 0);
                 startingPosition = new Vector2d(37.8, 35.5);
 
                 break;
             case LEFT: // left
                 trajStart = drive
                         .actionBuilder(new Pose2d(12, -60, Math.toRadians(270)))
-                        .strafeToConstantHeading(new Vector2d(14, -34))
-                        .turn(Math.toRadians(90));
-//                        .strafeToConstantHeading(new Vector2d(18, 34))
-//                        .strafeToConstantHeading(new Vector2d(14, 34));
-                trajBackdrop = drive.actionBuilder(new Pose2d(14, -34, Math.toRadians(180)))
-                        .strafeToLinearHeading(new Vector2d(20, -45), Math.toRadians(135))
-                        .strafeToLinearHeading(new Vector2d(41.7, -45.5), Math.toRadians(180));
-                startingPosition = new Vector2d(37.8, 45.5);
+                        .strafeToConstantHeading(new Vector2d(12, -36))
+                        .turn(Math.toRadians(90))
+                        .strafeToConstantHeading(new Vector2d(6, -36))
+                        .strafeToConstantHeading(new Vector2d(9.5, -36));
+
+                trajBackdrop = drive.actionBuilder(new Pose2d(9.5, -36, 0))
+                        .strafeToConstantHeading(new Vector2d(37.8, -29))
+                        .turn(Math.toRadians(184));
+//                        .splineToSplineHeading(new Pose2d(37.8, -29, Math.PI), 0);
 
                 break;
             default:
@@ -290,6 +288,7 @@ public class RedCloseAuto extends LinearOpMode {
                 trajBackdrop.build(),
                 new AprilTagAlign()
         ));
+        robot.kill();
     }
 
 

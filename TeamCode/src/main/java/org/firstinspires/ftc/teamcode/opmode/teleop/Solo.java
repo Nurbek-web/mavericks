@@ -171,18 +171,12 @@ public class Solo extends CommandOpMode {
     @Override
     public void run() {
         CommandScheduler.getInstance().run();
-        robot.clearBulkCache();
-        robot.read();
-        robot.periodic();
-        robot.write();
-
-        angle = robot.getAngle();
 
         robot.liftMotor.setPower(gamepad2.left_stick_y);
-
-        if (gamepad1.options) {
-            robot.resetIMU();
-        }
+//
+//        if (gamepad1.options) {
+//            robot.resetIMU();
+//        }
 
 //        // G1 - Drivetrain Control
 //        robot.drivetrain.set(
@@ -193,8 +187,8 @@ public class Solo extends CommandOpMode {
 //                ), 0
 //        );
 
-        robot.drivetrain.driveFieldCentric(-gamepad1.left_stick_y, gamepad1.left_stick_x * 1.1, gamepad1.right_stick_x, angle);
-//        robot.drivetrain.driveRobotCentric(-gamepad1.left_stick_y, gamepad1.left_stick_x * 1.1, gamepad1.right_stick_x);
+//        robot.drivetrain.driveFieldCentric(-gamepad1.left_stick_y, gamepad1.left_stick_x * 1.1, gamepad1.right_stick_x, angle);
+        robot.drivetrain.driveRobotCentric(-gamepad1.left_stick_y, gamepad1.left_stick_x * 1.1, gamepad1.right_stick_x);
         telemetry.addData("left_stick_y", -gamepad1.left_stick_y);
         telemetry.addData("left_stick_x", gamepad1.left_stick_x);
         telemetry.addData("right_stick_x", gamepad1.right_stick_x);
@@ -213,7 +207,6 @@ public class Solo extends CommandOpMode {
         telemetry.addData("left_stick_y", gamepad2.left_stick_y);
 
         double loop = System.nanoTime();
-        telemetry.addData("IMU angle: ", angle);
         telemetry.addData("hz ", 1000000000 / (loop - loopTime));
 //        telemetry.addData("height", robot.extension.getBackdropHeight());
         loopTime = loop;

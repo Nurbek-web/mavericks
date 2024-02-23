@@ -42,14 +42,16 @@ import java.util.ArrayList;
 
 
 @Config
-@Autonomous(name = "BlueCloseAuto \uD83D\uDD35", group = "Autonomous")
-public class BlueCloseAuto extends LinearOpMode {
+@Autonomous(name = "NurbekAuto \uD83D\uDD35", group = "Autonomous")
+public class NurbekAuto extends LinearOpMode {
     private final RobotHardware robot = RobotHardware.getInstance();
     BasicPipeline pipeline = new BasicPipeline();
     OpenCvCamera camera;
+    FtcDashboard dashboard = FtcDashboard.getInstance();
 
     public Servo autoServo;
     //    PropPipeline propPipeline;
+    VisionPortal portal;
     Location randomization;
     double fx = 578.272;
     double fy = 578.272;
@@ -131,7 +133,7 @@ public class BlueCloseAuto extends LinearOpMode {
             Actions.runBlocking(new SequentialAction(
                     new LiftUp()
             ));
-            return false;
+            return true;
 
         }
     }
@@ -163,7 +165,7 @@ public class BlueCloseAuto extends LinearOpMode {
             double pos = robot.liftMotor.getCurrentPosition();
             packet.put("liftPos", pos);
 
-            if (pos < 750) {
+            if (pos < 800) {
                 // true causes the action to rerun
                 return true;
             } else {
@@ -187,10 +189,8 @@ public class BlueCloseAuto extends LinearOpMode {
         Globals.IS_AUTO = true;
         // vision here that outputs position
         int visionOutputPosition = 1;
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "webka"), cameraMonitorViewId);
+        camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "webka"));
         camera.setPipeline(pipeline);
-
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
@@ -202,21 +202,7 @@ public class BlueCloseAuto extends LinearOpMode {
             }
         });
 
-
-        telemetry.update();
-        robot.init(hardwareMap);
-        MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(12, 60, Math.toRadians(90)));
-        lift = new LiftSubsystem();
-
-        autoServo = hardwareMap.get(Servo.class, "autoServo");
-        robot.liftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        autoServo.setPosition(1);
-        lift.closeOuttake();
-        lift.intendOuttake();
-
-        waitForStart();
-
-        sleep(1500);
+        sleep(3500);
 
         if (pipeline.getJunctionPoint().x < 330) {
             telemetry.addLine("LEFT PROP");
@@ -230,52 +216,70 @@ public class BlueCloseAuto extends LinearOpMode {
             telemetry.addLine("CENTER PROP");
         }
 
+        telemetry.update();
+        robot.init(hardwareMap);
+        MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(-35, 60, Math.toRadians(90)));
+        lift = new LiftSubsystem();
+
+        autoServo = hardwareMap.get(Servo.class, "autoServo");
+        robot.liftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        autoServo.setPosition(1);
+        lift.closeOuttake();
+        lift.intendOuttake();
+
+        waitForStart();
+
         telemetry.addLine("STARTED");
-        blueNear(drive, loc);
+        blueFar(drive, loc);
 
     }
 
-    private void blueNear(MecanumDrive drive, Location loc) {
+    private void blueFar(MecanumDrive drive, Location loc) {
 
         TrajectoryActionBuilder trajStart, trajBackdrop;
-        
+
         Vector2d startingPosition;
         switch(loc){
             case RIGHT: // right
                 trajStart = drive
-                        .actionBuilder(new Pose2d(12, 60, Math.toRadians(90)))
+                        .actionBuilder(new Pose2d(-35, 60, Math.toRadians(90)))
 
-                        .strafeToConstantHeading(new Vector2d(12, 37))
+                        .strafeToConstantHeading(new Vector2d(-35, 37))
                         .turn(-Math.toRadians(90));
 //                        .strafeToConstantHeading(new Vector2d(5, 37))
 //                        .strafeToConstantHeading(new Vector2d(12, 37));
-                trajBackdrop = drive.actionBuilder(new Pose2d(12, 37, 0))
-                        .splineToSplineHeading(new Pose2d(41.7, 33.5, Math.PI), 0);
-                startingPosition = new Vector2d(37.8, 30);
+                trajBackdrop = drive.actionBuilder(new Pose2d(-36, 37, 0))
+                        .strafeToConstantHeading(new Vector2d(-35, 58))
+                        .turn(Math.toRadians(90))
+                        .strafeToConstantHeading(new Vector2d(20, 57))
+                        .splineToSplineHeading(new Pose2d(37.3, 34, Math.PI), 0);
                 break;
             case CENTER: // center
                 trajStart = drive
-                        .actionBuilder(new Pose2d(12, 60, Math.toRadians(90)))
-                        .strafeToConstantHeading(new Vector2d(12, 30))
-                        .strafeToConstantHeading(new Vector2d(12, 36));
-                trajBackdrop = drive.actionBuilder(new Pose2d(12, 36, Math.toRadians(90)))
-                        .strafeToConstantHeading(new Vector2d(30, 33))
-                        .splineToSplineHeading(new Pose2d(41.7, 39.5, Math.PI), 0);
-                startingPosition = new Vector2d(37.8, 35.5);
+                        .actionBuilder(new Pose2d(-35, 60, Math.toRadians(90)))
+                        .strafeToConstantHeading(new Vector2d(-35, 30))
+                        .strafeToConstantHeading(new Vector2d(-35, 36));
+                trajBackdrop = drive.actionBuilder(new Pose2d(-35, 36, Math.toRadians(90)))
+                        .strafeToConstantHeading(new Vector2d(-35, 58))
+                        .strafeToConstantHeading(new Vector2d(20, 57))
+                        .splineToSplineHeading(new Pose2d(37.3, 40, Math.PI), 0);
 
                 break;
             case LEFT: // left
                 trajStart = drive
-                        .actionBuilder(new Pose2d(12, 60, Math.toRadians(90)))
-                        .strafeToConstantHeading(new Vector2d(14, 34))
-                        .turn(Math.toRadians(90));
+                        .actionBuilder(new Pose2d(-35, 58, Math.toRadians(90)))
+                        .strafeToConstantHeading(new Vector2d(-36, 34))
+                        .turn(Math.toRadians(90))
+                        .strafeToConstantHeading(new Vector2d(-32, 34))
+                        .strafeToConstantHeading(new Vector2d(-34, 34));
 //                        .strafeToConstantHeading(new Vector2d(18, 34))
 //                        .strafeToConstantHeading(new Vector2d(14, 34));
-                trajBackdrop = drive.actionBuilder(new Pose2d(14, 34, Math.toRadians(180)))
-                        .strafeToLinearHeading(new Vector2d(20, 45), Math.toRadians(135))
-                        .strafeToLinearHeading(new Vector2d(41.7, 45.5), Math.toRadians(180));
-                startingPosition = new Vector2d(37.8, 45.5);
-
+                trajBackdrop = drive.actionBuilder(new Pose2d(-34, 34, Math.toRadians(180)))
+                        .strafeToConstantHeading(new Vector2d(-36, 34))
+                        .strafeToConstantHeading(new Vector2d(-35, 58))
+                        .turn(-Math.toRadians(90))
+                        .strafeToConstantHeading(new Vector2d(20, 57))
+                        .strafeToLinearHeading(new Vector2d(37.3, 47.5), Math.toRadians(180));
                 break;
             default:
                 throw new Error("Unknown team prop position");

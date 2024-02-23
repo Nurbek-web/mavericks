@@ -30,6 +30,7 @@ import org.firstinspires.ftc.teamcode.common.subsystem.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.common.subsystem.LiftSubsystem;
 import org.firstinspires.ftc.teamcode.common.vision.AprilTagDetectionPipeline;
 import org.firstinspires.ftc.teamcode.common.vision.Location;
+import org.firstinspires.ftc.teamcode.common.vision.RedPipeline;
 import org.firstinspires.ftc.teamcode.vision.sim.BasicPipeline;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.openftc.apriltag.AprilTagDetection;
@@ -42,14 +43,16 @@ import java.util.ArrayList;
 
 
 @Config
-@Autonomous(name = "BlueCloseAuto \uD83D\uDD35", group = "Autonomous")
-public class BlueCloseAuto extends LinearOpMode {
+@Autonomous(name = "RedFARAuto", group = "Autonomous")
+public class RedFarAuto extends LinearOpMode {
     private final RobotHardware robot = RobotHardware.getInstance();
-    BasicPipeline pipeline = new BasicPipeline();
+    RedPipeline pipeline = new RedPipeline(telemetry);
     OpenCvCamera camera;
+    FtcDashboard dashboard = FtcDashboard.getInstance();
 
     public Servo autoServo;
     //    PropPipeline propPipeline;
+    VisionPortal portal;
     Location randomization;
     double fx = 578.272;
     double fy = 578.272;
@@ -115,14 +118,14 @@ public class BlueCloseAuto extends LinearOpMode {
                 TrajectoryActionBuilder trajApril;
                 if(tagOfInterest.id==3 || tagOfInterest.id==6){
                     trajApril = drive.actionBuilder(new Pose2d(0, 0, 0))
-                            .strafeToConstantHeading(new Vector2d(0, xperInch * x+2));
+                            .strafeToConstantHeading(new Vector2d(0, -xperInch * x+2));
                     Actions.runBlocking(new SequentialAction(
                             trajApril.build()
                     ));
                 }else{
 
                     trajApril = drive.actionBuilder(new Pose2d(0, 0, 0))
-                            .strafeToConstantHeading(new Vector2d(0, xperInch * x));
+                            .strafeToConstantHeading(new Vector2d(0, -xperInch * x));
                     Actions.runBlocking(new SequentialAction(
                             trajApril.build()
                     ));
@@ -131,7 +134,7 @@ public class BlueCloseAuto extends LinearOpMode {
             Actions.runBlocking(new SequentialAction(
                     new LiftUp()
             ));
-            return false;
+            return true;
 
         }
     }
@@ -190,7 +193,6 @@ public class BlueCloseAuto extends LinearOpMode {
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "webka"), cameraMonitorViewId);
         camera.setPipeline(pipeline);
-
         camera.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
@@ -202,21 +204,7 @@ public class BlueCloseAuto extends LinearOpMode {
             }
         });
 
-
-        telemetry.update();
-        robot.init(hardwareMap);
-        MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(12, 60, Math.toRadians(90)));
-        lift = new LiftSubsystem();
-
-        autoServo = hardwareMap.get(Servo.class, "autoServo");
-        robot.liftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        autoServo.setPosition(1);
-        lift.closeOuttake();
-        lift.intendOuttake();
-
-        waitForStart();
-
-        sleep(1500);
+        sleep(3500);
 
         if (pipeline.getJunctionPoint().x < 330) {
             telemetry.addLine("LEFT PROP");
@@ -230,6 +218,19 @@ public class BlueCloseAuto extends LinearOpMode {
             telemetry.addLine("CENTER PROP");
         }
 
+        telemetry.update();
+        robot.init(hardwareMap);
+        MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(-34, -60, Math.toRadians(270)));
+        lift = new LiftSubsystem();
+
+        autoServo = hardwareMap.get(Servo.class, "autoServo");
+        robot.liftMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        autoServo.setPosition(1);
+        lift.closeOuttake();
+        lift.intendOuttake();
+
+        waitForStart();
+
         telemetry.addLine("STARTED");
         blueNear(drive, loc);
 
@@ -238,43 +239,41 @@ public class BlueCloseAuto extends LinearOpMode {
     private void blueNear(MecanumDrive drive, Location loc) {
 
         TrajectoryActionBuilder trajStart, trajBackdrop;
-        
+
         Vector2d startingPosition;
         switch(loc){
             case RIGHT: // right
-                trajStart = drive
-                        .actionBuilder(new Pose2d(12, 60, Math.toRadians(90)))
-
-                        .strafeToConstantHeading(new Vector2d(12, 37))
-                        .turn(-Math.toRadians(90));
-//                        .strafeToConstantHeading(new Vector2d(5, 37))
-//                        .strafeToConstantHeading(new Vector2d(12, 37));
-                trajBackdrop = drive.actionBuilder(new Pose2d(12, 37, 0))
-                        .splineToSplineHeading(new Pose2d(41.7, 33.5, Math.PI), 0);
-                startingPosition = new Vector2d(37.8, 30);
+                trajStart = drive.actionBuilder(new Pose2d(-34, -60, Math.toRadians(270)))
+                        .strafeToLinearHeading(new Vector2d(-36, -34), Math.toRadians(180))
+                        .strafeToConstantHeading(new Vector2d(-32, -34))
+                        .strafeToConstantHeading(new Vector2d(-36, -34));
+                trajBackdrop = drive.actionBuilder(new Pose2d(-36, -34, Math.toRadians(180)))
+                        .strafeToConstantHeading(new Vector2d(-34, -60))
+                        .strafeToConstantHeading(new Vector2d(27, -60))
+                        .strafeToLinearHeading(new Vector2d(37.8, -45.5), Math.PI);
+                startingPosition = new Vector2d(37.8, -45.5);
                 break;
             case CENTER: // center
-                trajStart = drive
-                        .actionBuilder(new Pose2d(12, 60, Math.toRadians(90)))
-                        .strafeToConstantHeading(new Vector2d(12, 30))
-                        .strafeToConstantHeading(new Vector2d(12, 36));
-                trajBackdrop = drive.actionBuilder(new Pose2d(12, 36, Math.toRadians(90)))
-                        .strafeToConstantHeading(new Vector2d(30, 33))
-                        .splineToSplineHeading(new Pose2d(41.7, 39.5, Math.PI), 0);
-                startingPosition = new Vector2d(37.8, 35.5);
+                trajStart = drive.actionBuilder(new Pose2d(-34, -60, Math.toRadians(270)))
+                        .strafeToConstantHeading(new Vector2d(-34, -30))
+                        .strafeToConstantHeading(new Vector2d(-34, -34));
+                trajBackdrop = drive.actionBuilder(new Pose2d(-34, -34, Math.toRadians(270)))
+                        .strafeToConstantHeading(new Vector2d(-34, -60))
+//                        .strafeToLinearHeading(new Vector2d(37.8, -60))
+                        .splineToSplineHeading(new Pose2d(37.8, -33, Math.PI), 0);
+                startingPosition = new Vector2d(37.8, -33);
 
                 break;
             case LEFT: // left
-                trajStart = drive
-                        .actionBuilder(new Pose2d(12, 60, Math.toRadians(90)))
-                        .strafeToConstantHeading(new Vector2d(14, 34))
-                        .turn(Math.toRadians(90));
-//                        .strafeToConstantHeading(new Vector2d(18, 34))
-//                        .strafeToConstantHeading(new Vector2d(14, 34));
-                trajBackdrop = drive.actionBuilder(new Pose2d(14, 34, Math.toRadians(180)))
-                        .strafeToLinearHeading(new Vector2d(20, 45), Math.toRadians(135))
-                        .strafeToLinearHeading(new Vector2d(41.7, 45.5), Math.toRadians(180));
-                startingPosition = new Vector2d(37.8, 45.5);
+                trajStart = drive.actionBuilder(new Pose2d(-34, -60, Math.toRadians(270)))
+                        .strafeToLinearHeading(new Vector2d(-34, -34), Math.toRadians(0))
+                        .strafeToConstantHeading(new Vector2d(-38, -34))
+                        .strafeToConstantHeading(new Vector2d(-34, -34));
+                trajBackdrop = drive.actionBuilder(new Pose2d(-34, -34, Math.toRadians(0)))
+                        .strafeToConstantHeading(new Vector2d(-34, -58))
+                        .strafeToConstantHeading(new Vector2d(12, -58))
+                        .splineToSplineHeading(new Pose2d(37.8, -45, Math.PI), 0);
+                startingPosition = new Vector2d(37.8, -45);
 
                 break;
             default:
@@ -283,9 +282,7 @@ public class BlueCloseAuto extends LinearOpMode {
 
         Actions.runBlocking(new SequentialAction(
                 trajStart.build(),
-                new DropPixel(),
-                trajBackdrop.build(),
-                new AprilTagAlign()
+                new DropPixel()
         ));
     }
 

@@ -3,17 +3,14 @@ package org.firstinspires.ftc.teamcode.common.vision;
 import org.opencv.core.*;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
-import org.opencv.core.MatOfPoint2f;
-import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.imgproc.Moments;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
 // have JunctionPipeline return an x coordinate and a y coordinate in a list, maybe?
@@ -21,7 +18,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class RedPipeline extends OpenCvPipeline {
     Telemetry telemetry;
 
-    public RedPipeline(Telemetry telemetry) {
+    public RedPipeline() {
         this.telemetry = telemetry;
     }
 

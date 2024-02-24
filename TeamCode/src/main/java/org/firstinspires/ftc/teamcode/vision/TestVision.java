@@ -16,7 +16,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 @TeleOp(name = "PropTesting")
 public class TestVision extends OpMode {
 
-    RedPipeline pipeline = new RedPipeline(telemetry);
+    RedPipeline pipeline = new RedPipeline();
     OpenCvCamera camera;
     FtcDashboard dashboard = FtcDashboard.getInstance();
 

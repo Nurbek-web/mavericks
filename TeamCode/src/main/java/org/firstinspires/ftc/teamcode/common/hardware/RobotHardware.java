@@ -90,6 +90,7 @@ public class RobotHardware {
     public Servo upFront;
     public Servo downLeft;
     public Servo autoServo;
+    public Servo upReversedOuttake;
 
 
 
@@ -202,7 +203,6 @@ public class RobotHardware {
         autoServo.setPosition(1);
         upRight.setDirection(Servo.Direction.REVERSE);
         upLeft.setDirection(Servo.Direction.FORWARD);
-
 
         this.hangLeftServo = hardwareMap.get(Servo.class, "hangLeftServo");
         this.hangRightServo = hardwareMap.get(Servo.class, "hangRightServo");

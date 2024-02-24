@@ -34,25 +34,25 @@ public class MeepMeepTesting {
 
 
 
-        switch (ROUTE) {
-            case BLUE_NEAR:
-                myBot = blueNear(meepMeep);
-                break;
-            case BLUE_FAR:
-                myBot = blueFar(meepMeep);
-                break;
-            case RED_NEAR:
-                myBot = redNear(meepMeep);
-                break;
-            case RED_FAR:
-                myBot = redFar(meepMeep);
-                break;
+//        switch (ROUTE) {
+//            case BLUE_NEAR:
+//                myBot = blueNear(meepMeep);
+//                break;
+//            case BLUE_FAR:
+//                myBot = blueFar(meepMeep);
+//                break;
+//            case RED_NEAR:
+//                myBot = redNear(meepMeep);
+//                break;
+//            case RED_FAR:
+//                myBot = redFar(meepMeep);
+//                break;
+//
+//            default:
+//                throw new Error("Initializition problem");
+//        }
 
-            default:
-                throw new Error("Initializition problem");
-        }
-
-
+        myBot = aaa(meepMeep);
 
 //        myBot = new DefaultBotBuilder(meepMeep)
 //                // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
@@ -71,6 +71,16 @@ public class MeepMeepTesting {
                 .start();
     }
 
+    private static RoadRunnerBotEntity aaa(MeepMeep meepMeep){
+        RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
+                .setConstraints(MAX_VEL, MAX_ACCEL, Math.toRadians(180), Math.toRadians(180), 15)
+                .build();
+
+        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(0, 0, 0))
+                .strafeToConstantHeading(new Vector2d(-4, 10)).build());
+
+        return myBot;
+    }
     private static RoadRunnerBotEntity blueNear(MeepMeep meepMeep) {
         RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
                 .setConstraints(MAX_VEL, MAX_ACCEL, Math.toRadians(180), Math.toRadians(180), 15)

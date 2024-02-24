@@ -35,8 +35,9 @@ public class LiftTest extends OpMode {
     private final int lDownPos = 0;
     LiftSubsystem lift;
 
+    public static double UP_RIGHT = 0;
+
     public static double UP_LEFT = 0;
-    public static double UP_RIGHT = 1;
 
     boolean openPixel = true;
 
@@ -76,6 +77,14 @@ public class LiftTest extends OpMode {
 
         telemetry.addData("liftPos", robot.liftMotor.getCurrentPosition());
 
+        if(gamepad1.y){
+            this.robot.upRight.setPosition(UP_RIGHT);
+            this.robot.downLeft.setPosition(UP_RIGHT);
+        }
+
+        if(gamepad1.x){
+            this.robot.upLeft.setPosition(UP_LEFT);
+        }
 
 //        telemetry.addData("upRight: ", robot.upRight.get);
 //        telemetry.addData("downLeft: ", robot.downLeft.getPosition());

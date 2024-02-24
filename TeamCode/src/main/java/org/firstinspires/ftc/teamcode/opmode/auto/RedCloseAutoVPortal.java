@@ -20,6 +20,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
+import org.firstinspires.ftc.teamcode.common.drive.pathing.geometry.Pose;
 import org.firstinspires.ftc.teamcode.common.hardware.Globals;
 import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
 import org.firstinspires.ftc.teamcode.common.subsystem.IntakeSubsystem;
@@ -185,8 +186,11 @@ public class RedCloseAutoVPortal extends LinearOpMode {
                 Actions.runBlocking(new SequentialAction(
                         traj2.build()
                 ));
+                drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
                 Actions.runBlocking(new SequentialAction(
-                        new LiftUp()
+                        new LiftUp(),
+                        drive.actionBuilder(new Pose2d(0, 0, 0))
+                                .strafeToConstantHeading(new Vector2d(4, -10)).build()
                 ));
                 visionPortal.close();
                 return false;
@@ -196,8 +200,11 @@ public class RedCloseAutoVPortal extends LinearOpMode {
                 telemetry.addLine("NO APRIL TAG");
                 telemetry.update();
             }
+            drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
             Actions.runBlocking(new SequentialAction(
-                    new LiftUp()
+                    new LiftUp(),
+                    drive.actionBuilder(new Pose2d(0, 0, 0))
+                            .strafeToConstantHeading(new Vector2d(4, -10)).build()
             ));
             return false;
         }

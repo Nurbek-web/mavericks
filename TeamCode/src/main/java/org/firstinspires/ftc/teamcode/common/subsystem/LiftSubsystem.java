@@ -72,10 +72,10 @@ public class LiftSubsystem extends SubsystemBase {
     // holding pixels
     public void closeOuttake()
     {
-        this.robot.upFront.setPosition(0.535);
+        this.robot.upFront.setPosition(0);
     }
     public void openOuttake(){
-        this.robot.upFront.setPosition(0);
+        this.robot.upFront.setPosition(0.535);
     }
 
 

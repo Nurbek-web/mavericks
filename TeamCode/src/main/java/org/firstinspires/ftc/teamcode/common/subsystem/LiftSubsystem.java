@@ -60,7 +60,7 @@ public class LiftSubsystem extends SubsystemBase {
     public void extend1Outtake() { // first level
         this.robot.upRight.setPosition(.3); // 0.2
         this.robot.downLeft.setPosition(.3);
-        this.robot.upLeft.setPosition(.8);
+        this.robot.upLeft.setPosition(.9);
 
     }
     public void intendOuttake() { // init state of lift

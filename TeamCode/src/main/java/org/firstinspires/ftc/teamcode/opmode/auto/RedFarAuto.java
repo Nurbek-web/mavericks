@@ -46,7 +46,7 @@ import java.util.ArrayList;
 @Autonomous(name = "RedFARAuto", group = "Autonomous")
 public class RedFarAuto extends LinearOpMode {
     private final RobotHardware robot = RobotHardware.getInstance();
-    RedPipeline pipeline = new RedPipeline(telemetry);
+    RedPipeline pipeline = new RedPipeline();
     OpenCvCamera camera;
     FtcDashboard dashboard = FtcDashboard.getInstance();
 

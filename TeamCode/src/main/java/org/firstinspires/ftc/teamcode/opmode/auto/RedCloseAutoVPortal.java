@@ -45,7 +45,7 @@ import java.util.List;
 @Autonomous(name = "RedCloseAutoVPortal", group = "Autonomous")
 public class RedCloseAutoVPortal extends LinearOpMode {
     private final RobotHardware robot = RobotHardware.getInstance();
-    RedPipeline pipeline = new RedPipeline(telemetry);
+    RedPipeline pipeline = new RedPipeline();
     OpenCvCamera camera;
     FtcDashboard dashboard = FtcDashboard.getInstance();
 

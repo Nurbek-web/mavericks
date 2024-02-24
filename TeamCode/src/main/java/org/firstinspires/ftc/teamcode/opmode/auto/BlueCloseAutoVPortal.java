@@ -174,8 +174,12 @@ public class BlueCloseAutoVPortal extends LinearOpMode {
                 Actions.runBlocking(new SequentialAction(
                         traj2.build()
                 ));
+                drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
+
                 Actions.runBlocking(new SequentialAction(
-                        new LiftUp()
+                        new LiftUp(),
+                        drive.actionBuilder(new Pose2d(0, 0, 0))
+                                .strafeToConstantHeading(new Vector2d(4, 10)).build()
                 ));
                 visionPortal.close();
                 return false;
@@ -185,8 +189,11 @@ public class BlueCloseAutoVPortal extends LinearOpMode {
                 telemetry.addLine("NO APRIL TAG");
                 telemetry.update();
             }
+            drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
             Actions.runBlocking(new SequentialAction(
-                    new LiftUp()
+                    new LiftUp(),
+                    drive.actionBuilder(new Pose2d(0, 0, 0))
+                            .strafeToConstantHeading(new Vector2d(4, 10)).build()
             ));
             return false;
         }

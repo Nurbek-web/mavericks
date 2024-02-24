@@ -48,7 +48,7 @@ import java.util.ArrayList;
 @Autonomous(name = "RedCloseAuto \uD83D\uDD35", group = "Autonomous")
 public class RedCloseAuto extends LinearOpMode {
     private final RobotHardware robot = RobotHardware.getInstance();
-    RedPipeline pipeline = new RedPipeline(telemetry);
+    RedPipeline pipeline = new RedPipeline();
     OpenCvCamera camera;
     FtcDashboard dashboard = FtcDashboard.getInstance();
 

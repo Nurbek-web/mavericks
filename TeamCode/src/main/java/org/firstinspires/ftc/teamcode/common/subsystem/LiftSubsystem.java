@@ -50,23 +50,23 @@ public class LiftSubsystem extends SubsystemBase {
 //        robot.liftMotor.setVelocity(200);
 //    }
 
-    public void extend2Outtake() {
-        // down
-        this.robot.upRight.setPosition(0);
-        this.robot.upLeft.setPosition(0.8);
+    public void extend2Outtake() { // second level
+        this.robot.upRight.setPosition(.15);
+        this.robot.downLeft.setPosition(.15);
+        this.robot.upLeft.setPosition(1);
 
     }
 
-    public void extend1Outtake() {
-        // down
-        this.robot.upRight.setPosition(0.2);
-        this.robot.upLeft.setPosition(0.7);
+    public void extend1Outtake() { // first level
+        this.robot.upRight.setPosition(.3); // 0.2
+        this.robot.downLeft.setPosition(.3);
+        this.robot.upLeft.setPosition(.8);
 
     }
-    public void intendOuttake() {
-        // up
-        this.robot.upRight.setPosition(0.8);
-        this.robot.upLeft.setPosition(0.47);
+    public void intendOuttake() { // init state of lift
+        this.robot.upRight.setPosition(.99);
+        this.robot.downLeft.setPosition(.99);
+        this.robot.upLeft.setPosition(.47);
     }
 
     // holding pixels
@@ -85,40 +85,4 @@ public class LiftSubsystem extends SubsystemBase {
     public void unhaltPixel(){
         this.robot.upBack.setPosition(0);
     }
-
-    // control lift position
-    public void moveFirstServos(double amount){ // amount can be 0.1; 0.2; and so on
-        if(Globals.liftLevel==Globals.LiftLevel.FIRST){
-            return;
-        }
-        if(amount==0.0){
-            robot.upRight.setPosition(.5);
-            robot.upLeft.setPosition(.5);
-            return;
-        }
-        if(curFirstServosPos+amount>=1.0 || curFirstServosPos+amount<0){
-            return;
-        }
-        robot.upRight.setPosition(curFirstServosPos+amount);
-        robot.upLeft.setPosition(curFirstServosPos+amount);
-
-    }
-
-    public void moveSecondServos(double amount){ // what were the servo names???
-        if(Globals.liftLevel==Globals.LiftLevel.FIRST){
-            return;
-        }
-        if(amount==0.0){
-            robot.upRight.setPosition(.5);
-            robot.upLeft.setPosition(.5);
-            return;
-        }
-        if(curSecondServosPos+amount>=1.0 || curSecondServosPos+amount<0){
-            return;
-        }
-        robot.upRight.setPosition(curSecondServosPos+amount);
-        robot.upLeft.setPosition(curSecondServosPos+amount);
-    }
-    public static double getCurFirstServosPos(){ return curFirstServosPos; }
-    public static double getCurSecondServosPos(){ return curSecondServosPos; }
 }

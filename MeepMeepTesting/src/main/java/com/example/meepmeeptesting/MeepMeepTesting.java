@@ -18,7 +18,7 @@ enum Route {
 }
 
 public class MeepMeepTesting {
-    public static final Route ROUTE = Route.RED_NEAR;
+    public static final Route ROUTE = Route.BLUE_NEAR;
 
     public static final double DELAY = 0.5;
     public static final double MAX_VEL = 60;
@@ -84,11 +84,11 @@ public class MeepMeepTesting {
                 trajStart = myBot.getDrive()
                         .actionBuilder(new Pose2d(12, 60, Math.toRadians(90)))
 
-                        .strafeToConstantHeading(new Vector2d(12, 37))
+                        .strafeToConstantHeading(new Vector2d(12, 35.5))
                         .turn(-Math.toRadians(90))
-                        .strafeToConstantHeading(new Vector2d(8, 37))
-                        .strafeToConstantHeading(new Vector2d(12, 37));
-                trajBackdrop = myBot.getDrive().actionBuilder(new Pose2d(12, 37, 0))
+                        .strafeToConstantHeading(new Vector2d(8, 35.5))
+                        .strafeToConstantHeading(new Vector2d(12, 35.5));
+                trajBackdrop = myBot.getDrive().actionBuilder(new Pose2d(12, 35.5, 0))
                         .splineToSplineHeading(new Pose2d(37.8, 30, Math.PI), 0);                startingPosition = new Vector2d(37.8, 28.5);
                 break;
             case 1: // center
@@ -212,7 +212,7 @@ public class MeepMeepTesting {
         DriveShim drive = myBot.getDrive();
 
         TrajectoryActionBuilder trajBackdrop, trajStart;
-        int propPosition = 2;
+        int propPosition = 0;
         Vector2d startingPosition;
         switch(propPosition){
             case 0: // right
@@ -225,7 +225,7 @@ public class MeepMeepTesting {
                         .actionBuilder(new Pose2d(14, -34, Math.toRadians(180)))
                         .strafeToConstantHeading(new Vector2d(14, -50))
                         .strafeToConstantHeading(new Vector2d(35, -50))
-                        .strafeToConstantHeading(new Vector2d(40.8, -45.5));
+                        .strafeToConstantHeading(new Vector2d(40.8, -41.5));
                 break;
             case 1: // center
                 trajStart = drive

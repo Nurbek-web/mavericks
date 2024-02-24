@@ -27,17 +27,30 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-package org.firstinspires.ftc.robotcontroller.external.samples;
+package org.firstinspires.ftc.teamcode.opmode.auto;
 
+import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.SequentialAction;
+import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
+import com.acmerobotics.roadrunner.Vector2d;
+import com.acmerobotics.roadrunner.ftc.Actions;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
 import org.firstinspires.ftc.robotcore.external.hardware.camera.BuiltinCameraDirection;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.MecanumDrive;
+import org.firstinspires.ftc.teamcode.common.subsystem.LiftSubsystem;
+import org.firstinspires.ftc.teamcode.common.vision.Location;
+import org.firstinspires.ftc.teamcode.opmode.auto.RedCloseAutoVPortal;
 import org.firstinspires.ftc.vision.VisionPortal;
 import org.firstinspires.ftc.vision.apriltag.AprilTagDetection;
 import org.firstinspires.ftc.vision.apriltag.AprilTagProcessor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /*
@@ -61,8 +74,9 @@ import java.util.List;
  * Use Android Studio to Copy this Class, and Paste it into your team's code folder with a new name.
  * Remove or comment out the @Disabled line to add this OpMode to the Driver Station OpMode list.
  */
-@TeleOp(name = "Concept: AprilTag Easy", group = "Concept")
-public class ConceptAprilTagEasy extends LinearOpMode {
+@Autonomous(name = "Concept: AprilTag CEHCK", group = "Concept")
+public class AprilTagVP extends LinearOpMode {
+    private ElapsedTime runtime = new ElapsedTime();
 
     private static final boolean USE_WEBCAM = true;  // true for webcam, false for phone camera
 
@@ -74,7 +88,9 @@ public class ConceptAprilTagEasy extends LinearOpMode {
     /**
      * The variable to store our instance of the vision portal.
      */
+    Location loc;
     private VisionPortal visionPortal;
+    MecanumDrive drive;
 
     @Override
     public void runOpMode() {
@@ -87,28 +103,119 @@ public class ConceptAprilTagEasy extends LinearOpMode {
         telemetry.update();
         waitForStart();
 
-        if (opModeIsActive()) {
-            while (opModeIsActive()) {
+        sleep(1500);
 
-                telemetryAprilTag();
+        loc = Location.LEFT;
 
-                // Push telemetry to the Driver Station.
-                telemetry.update();
+        TrajectoryActionBuilder traj;
 
-                // Save CPU resources; can resume streaming when needed.
-                if (gamepad1.dpad_down) {
-                    visionPortal.stopStreaming();
-                } else if (gamepad1.dpad_up) {
-                    visionPortal.resumeStreaming();
+        boolean tagFound = false;
+
+        AprilTagDetection tagOfInterest = null;
+
+        List<AprilTagDetection> currentDetections;
+        runtime.reset();
+
+
+
+        while (!tagFound && runtime.seconds() <= 5.0)
+        {
+            currentDetections = aprilTag.getDetections();
+            telemetry.addData("telemetry detections", currentDetections);
+            telemetry.update();
+            for (AprilTagDetection tag : currentDetections) {
+                if (tag.metadata != null) {
+                        tagFound = true;
+                        tagOfInterest = tag;
+                        break;
                 }
+            }   // end for() loop
+            sleep(20);
+        }
+        telemetry.addLine("fkldsnfds");
+        if (tagFound) {
+            telemetry.addLine("NDSANDSJKANDSJAKnkj");
+            telemetry.update();
 
-                // Share the CPU.
-                sleep(20);
-            }
+            drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
+
+            double x = tagOfInterest.ftcPose.x - 0.095;
+            double y = tagOfInterest.ftcPose.y - 10.7;
+
+            double xperInch = 40;
+
+            telemetry.addData("x", x);
+            telemetry.addData("y", y);
+
+            telemetry.update();
+
+            sleep(1000);
+
+            TrajectoryActionBuilder trajApril, traj2;
+            trajApril = drive.actionBuilder(new Pose2d(0, 0, 0))
+                    .turn(Math.toRadians(tagOfInterest.ftcPose.yaw));
+
+
+            Actions.runBlocking(new SequentialAction(
+                    trajApril.build()
+            ));
+            sleep(1000);
+
+            currentDetections = aprilTag.getDetections();
+            sleep(20);
+
+            for (AprilTagDetection tag : currentDetections) {
+                if (tag.metadata != null) {
+                    tagFound = true;
+                    tagOfInterest = tag;
+                    break;
+                }
+            }   // end for() loop
+
+             x = tagOfInterest.ftcPose.x - 0.095;
+             y = tagOfInterest.ftcPose.y - 10.7;
+
+            telemetry.addData("x", x);
+            telemetry.addData("y", y);
+
+            telemetry.update();
+
+
+            traj2 = drive.actionBuilder(new Pose2d(0, 0, 0))
+                    .strafeToConstantHeading(new Vector2d(-y, x));
+
+            Actions.runBlocking(new SequentialAction(
+                    traj2.build()
+            ));
         }
 
+
+//        if (opModeIsActive()) {
+//            while (opModeIsActive()) {
+//
+//                telemetryAprilTag();
+//
+//                // Push telemetry to the Driver Station.
+//                telemetry.update();
+//
+//                // Save CPU resources; can resume streaming when needed.
+//                if (gamepad1.dpad_down) {
+//                    visionPortal.stopStreaming();
+//                } else if (gamepad1.dpad_up) {
+//                    visionPortal.resumeStreaming();
+//                }
+//
+//                // Share the CPU.
+//                sleep(20);
+//            }
+//        }
+
+        telemetry.addLine("before closed");
         // Save more CPU resources when camera is no longer needed.
         visionPortal.close();
+
+        telemetry.addLine("Closed");
+        telemetry.update();
 
     }   // end method runOpMode()
 
@@ -123,10 +230,10 @@ public class ConceptAprilTagEasy extends LinearOpMode {
         // Create the vision portal the easy way.
         if (USE_WEBCAM) {
             visionPortal = VisionPortal.easyCreateWithDefaults(
-                hardwareMap.get(WebcamName.class, "webka"), aprilTag);
+                    hardwareMap.get(WebcamName.class, "webka"), aprilTag);
         } else {
             visionPortal = VisionPortal.easyCreateWithDefaults(
-                BuiltinCameraDirection.BACK, aprilTag);
+                    BuiltinCameraDirection.BACK, aprilTag);
         }
 
     }   // end method initAprilTag()

@@ -172,7 +172,7 @@ public class RedCloseAutoVPortal extends LinearOpMode {
                 }
 
                 double x = tagOfInterest.ftcPose.x - 0.095;
-                double y = tagOfInterest.ftcPose.y - 10.5;
+                double y = tagOfInterest.ftcPose.y - 10.2;
 
                 telemetry.addData("x", x);
                 telemetry.addData("y", y);
@@ -186,12 +186,21 @@ public class RedCloseAutoVPortal extends LinearOpMode {
                 Actions.runBlocking(new SequentialAction(
                         traj2.build()
                 ));
+                double amounttt=0;
+                if(loc==Location.CENTER){
+                    amounttt = 7;
+                }else if(loc==Location.LEFT){
+                    amounttt = 10.5;
+                }
+
                 drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
                 Actions.runBlocking(new SequentialAction(
                         new LiftUp(),
                         drive.actionBuilder(new Pose2d(0, 0, 0))
-                                .strafeToConstantHeading(new Vector2d(4, -10)).build()
+                                .strafeToConstantHeading(new Vector2d(2, 12+amounttt))
+                                .strafeToConstantHeading(new Vector2d(-4, 12+amounttt)).build()
                 ));
+                lift.intendOuttake();
                 visionPortal.close();
                 return false;
 
@@ -200,12 +209,21 @@ public class RedCloseAutoVPortal extends LinearOpMode {
                 telemetry.addLine("NO APRIL TAG");
                 telemetry.update();
             }
+            double amounttt=0;
+            if(loc==Location.CENTER){
+                amounttt = 7;
+            }else if(loc==Location.LEFT){
+                amounttt = 10.5;
+            }
             drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
+
             Actions.runBlocking(new SequentialAction(
                     new LiftUp(),
                     drive.actionBuilder(new Pose2d(0, 0, 0))
-                            .strafeToConstantHeading(new Vector2d(4, -10)).build()
+                            .strafeToConstantHeading(new Vector2d(2, 12+amounttt))
+                            .strafeToConstantHeading(new Vector2d(-4, 12+amounttt)).build()
             ));
+            lift.intendOuttake();
             return false;
         }
     }
@@ -237,17 +255,20 @@ public class RedCloseAutoVPortal extends LinearOpMode {
             double pos = robot.liftMotor.getCurrentPosition();
             packet.put("liftPos", pos);
 
-            if (pos < 750) {
+            if (pos < 670) {
                 // true causes the action to rerun
                 return true;
             } else {
                 // false stops action rerun
                 robot.liftMotor.setPower(0);
-                lift.extend1Outtake();
-                sleep(1400);
+                // extend outtake for auto
+                robot.upRight.setPosition(0.4);
+                robot.downLeft.setPosition(0.4);
+                robot.upLeft.setPosition(0.78);
+                sleep(1000);
                 lift.openOuttake();
 
-                sleep(2000);
+                sleep(500);
                 return false;
             }
             // overall, the action powers the lift until it surpasses
@@ -290,9 +311,18 @@ public class RedCloseAutoVPortal extends LinearOpMode {
         lift.closeOuttake();
         lift.intendOuttake();
 
-        waitForStart();
+        while (!isStarted() && !isStopRequested()) {
+            telemetry.addLine("Place the purple pixel between the second and third compliant wheels from the left.");
+            telemetry.addLine("It should be roughly centered.  It should be as close to touching the ground as possible WITHOUT touching the ground.");
+            telemetry.addLine("Ensure the intake is at the bottom of its backlash-induced free-spinning zone so the pixel doesn't scrape the ground.");
+            telemetry.addLine("The pan should be FULLY ON THE GROUND when the program starts.");
+            telemetry.addData("Prop x value: ", pipeline.getJunctionPoint().x);
+            telemetry.addData("Prop area: ", pipeline.getPropAreaAttr());
 
-        sleep(2000);
+            telemetry.update();
+        }
+
+        sleep(200);
 
         if (pipeline.getJunctionPoint().x < 330) {
             telemetry.addLine("LEFT PROP");
@@ -327,7 +357,7 @@ public class RedCloseAutoVPortal extends LinearOpMode {
                 trajBackdrop = drive.actionBuilder(new Pose2d(14, -34, Math.toRadians(180)))
                         .strafeToConstantHeading(new Vector2d(14, -50))
                         .strafeToConstantHeading(new Vector2d(35, -50))
-                        .strafeToConstantHeading(new Vector2d(38, -41));
+                        .strafeToConstantHeading(new Vector2d(38, -43));
                 startingPosition = new Vector2d(37.8, 30);
                 break;
             case CENTER: // center
@@ -338,7 +368,7 @@ public class RedCloseAutoVPortal extends LinearOpMode {
                 trajBackdrop = drive.actionBuilder(new Pose2d(12, -34, Math.toRadians(270)))
                         .strafeToConstantHeading(new Vector2d(28, -34))
                         .turn(-Math.toRadians(93))
-                        .strafeToConstantHeading(new Vector2d(38, -34.5));
+                        .strafeToConstantHeading(new Vector2d(38, -38.5));
 //                        .splineToSplineHeading(new Pose2d(38, -34.5, Math.PI), 0);
                 startingPosition = new Vector2d(37.8, 35.5);
 

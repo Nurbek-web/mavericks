@@ -24,6 +24,7 @@ import org.firstinspires.ftc.teamcode.common.hardware.Globals;
 import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
 import org.firstinspires.ftc.teamcode.common.subsystem.IntakeSubsystem;
 import org.firstinspires.ftc.teamcode.common.subsystem.LiftSubsystem;
+import org.firstinspires.ftc.teamcode.common.vision.BluePipeline;
 import org.firstinspires.ftc.teamcode.common.vision.Location;
 import org.firstinspires.ftc.teamcode.vision.sim.BasicPipeline;
 import org.firstinspires.ftc.vision.VisionPortal;
@@ -40,7 +41,7 @@ import java.util.List;
 @Autonomous(name = "BlueCloseAutoVPortal", group = "Autonomous")
 public class BlueCloseAutoVPortal extends LinearOpMode {
     private final RobotHardware robot = RobotHardware.getInstance();
-    BasicPipeline pipeline = new BasicPipeline();
+    BluePipeline pipeline = new BluePipeline();
     OpenCvCamera camera;
     FtcDashboard dashboard = FtcDashboard.getInstance();
 
@@ -154,7 +155,7 @@ public class BlueCloseAutoVPortal extends LinearOpMode {
                 }
 
                 x = tagOfInterest.ftcPose.x - 0.095;
-                y = tagOfInterest.ftcPose.y - 11.2;
+                y = tagOfInterest.ftcPose.y - 10.5;
 
                 telemetry.addData("x", x);
                 telemetry.addData("y", y);
@@ -195,6 +196,7 @@ public class BlueCloseAutoVPortal extends LinearOpMode {
                     drive.actionBuilder(new Pose2d(0, 0, 0))
                             .strafeToConstantHeading(new Vector2d(0, -20)).build()
             ));
+
             return false;
         }
     }
@@ -226,13 +228,14 @@ public class BlueCloseAutoVPortal extends LinearOpMode {
             double pos = robot.liftMotor.getCurrentPosition();
             packet.put("liftPos", pos);
 
-            if (pos < 885) {
+            if (pos < 750) {
                 // true causes the action to rerun
                 return true;
             } else {
                 // false stops action rerun
                 robot.liftMotor.setPower(0);
                 lift.extend1Outtake();
+
                 sleep(1400);
                 lift.openOuttake();
 
@@ -315,7 +318,7 @@ public class BlueCloseAutoVPortal extends LinearOpMode {
                         .strafeToConstantHeading(new Vector2d(8, 35.5))
                         .strafeToConstantHeading(new Vector2d(12, 35.5));
                 trajBackdrop = drive.actionBuilder(new Pose2d(12, 35.5, 0))
-                        .splineToSplineHeading(new Pose2d(37.8, 30, Math.PI), 0);
+                        .splineToSplineHeading(new Pose2d(41, 32.5, Math.PI), 0);
 
 //                        .strafeToConstantHeading(new Vector2d(14, 50))
 //                        .strafeToConstantHeading(new Vector2d(35, 50))

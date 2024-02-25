@@ -39,6 +39,9 @@ public class BluePipeline extends OpenCvPipeline {
         // TODO: crop the image
         // TODO: log images for debugging
 
+        Rect roi = new Rect(0, input.height() / 2, input.width(), input.height() / 2);
+        input = new Mat(input, roi);
+
 
         // crop out parts we're not concerned about
 
@@ -47,7 +50,7 @@ public class BluePipeline extends OpenCvPipeline {
 
 
         // Blur image to lessen noise
-        Imgproc.GaussianBlur(rawHSV, blurredHSV, new Size(15, 15), 0); // increase blur?
+        Imgproc.GaussianBlur(rawHSV, blurredHSV, new Size(15, 15), 1); // increase blur?
 
         Core.inRange(blurredHSV, darkestJunctions, lightestJunctions, thresholded);
 

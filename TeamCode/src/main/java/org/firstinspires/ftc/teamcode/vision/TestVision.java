@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.common.hardware.RobotHardware;
+import org.firstinspires.ftc.teamcode.common.vision.BluePipeline;
 import org.firstinspires.ftc.teamcode.common.vision.RedPipeline;
 import org.firstinspires.ftc.teamcode.vision.sim.BasicPipeline;
 import org.openftc.easyopencv.OpenCvCamera;
@@ -16,7 +17,7 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 @TeleOp(name = "PropTesting")
 public class TestVision extends OpMode {
 
-    RedPipeline pipeline = new RedPipeline();
+    BluePipeline pipeline = new BluePipeline();
     OpenCvCamera camera;
     FtcDashboard dashboard = FtcDashboard.getInstance();
 

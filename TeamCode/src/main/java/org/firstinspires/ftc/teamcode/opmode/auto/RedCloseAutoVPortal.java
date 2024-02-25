@@ -172,7 +172,7 @@ public class RedCloseAutoVPortal extends LinearOpMode {
                 }
 
                 double x = tagOfInterest.ftcPose.x - 0.095;
-                double y = tagOfInterest.ftcPose.y - 10.2;
+                double y = tagOfInterest.ftcPose.y - 10.5;
 
                 telemetry.addData("x", x);
                 telemetry.addData("y", y);
@@ -237,7 +237,7 @@ public class RedCloseAutoVPortal extends LinearOpMode {
             double pos = robot.liftMotor.getCurrentPosition();
             packet.put("liftPos", pos);
 
-            if (pos < 1150) {
+            if (pos < 750) {
                 // true causes the action to rerun
                 return true;
             } else {

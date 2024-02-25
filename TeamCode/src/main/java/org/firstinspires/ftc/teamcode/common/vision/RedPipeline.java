@@ -16,10 +16,8 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 // have JunctionPipeline return an x coordinate and a y coordinate in a list, maybe?
 
 public class RedPipeline extends OpenCvPipeline {
-    Telemetry telemetry;
 
     public RedPipeline() {
-        this.telemetry = telemetry;
     }
 
 
@@ -39,6 +37,9 @@ public class RedPipeline extends OpenCvPipeline {
     public Mat processFrame(Mat input) {
 
         // crop out parts we're not concerned about
+
+        Rect roi = new Rect(0, input.height() / 2, input.width(), input.height() / 2);
+        input = new Mat(input, roi);
 
         // Convert image to HSV
         Imgproc.cvtColor(input, rawYCrCb, Imgproc.COLOR_RGB2YCrCb);
@@ -83,14 +84,14 @@ public class RedPipeline extends OpenCvPipeline {
             junctionDistanceAttr = 240000/Imgproc.contourArea(biggestContour);
             junctionPointAttr = junctionPoint;
 
-            telemetry.addLine("Place the purple pixel between the second and third compliant wheels from the left.");
-            telemetry.addLine("It should be roughly centered.  It should be as close to touching the ground as possible WITHOUT touching the ground.");
-            telemetry.addLine("Ensure the intake is at the bottom of its backlash-induced free-spinning zone so the pixel doesn't scrape the ground.");
-            telemetry.addLine("The pan should be FULLY ON THE GROUND when the program starts.");
-            telemetry.addData("Prop x value: ", getJunctionPoint().x);
-            telemetry.addData("Prop area: ", getPropAreaAttr());
-
-            telemetry.update();
+//            telemetry.addLine("Place the purple pixel between the second and third compliant wheels from the left.");
+//            telemetry.addLine("It should be roughly centered.  It should be as close to touching the ground as possible WITHOUT touching the ground.");
+//            telemetry.addLine("Ensure the intake is at the bottom of its backlash-induced free-spinning zone so the pixel doesn't scrape the ground.");
+//            telemetry.addLine("The pan should be FULLY ON THE GROUND when the program starts.");
+//            telemetry.addData("Prop x value: ", getJunctionPoint().x);
+//            telemetry.addData("Prop area: ", getPropAreaAttr());
+//
+//            telemetry.update();
         }
 
         Imgproc.drawContours(input, contours, -1, new Scalar(0,255,0), 3);

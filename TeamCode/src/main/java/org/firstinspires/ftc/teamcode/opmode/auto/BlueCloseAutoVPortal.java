@@ -36,7 +36,6 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import java.util.ArrayList;
 import java.util.List;
 
-@Config
 @Autonomous(name = "BlueCloseAutoVPortal", group = "Autonomous")
 public class BlueCloseAutoVPortal extends LinearOpMode {
     private final RobotHardware robot = RobotHardware.getInstance();
@@ -154,7 +153,7 @@ public class BlueCloseAutoVPortal extends LinearOpMode {
                 }
 
                 x = tagOfInterest.ftcPose.x - 0.095;
-                y = tagOfInterest.ftcPose.y - 11.2;
+                y = tagOfInterest.ftcPose.y - 10;
 
                 telemetry.addData("x", x);
                 telemetry.addData("y", y);
@@ -179,8 +178,9 @@ public class BlueCloseAutoVPortal extends LinearOpMode {
                 Actions.runBlocking(new SequentialAction(
                         new LiftUp(),
                         drive.actionBuilder(new Pose2d(0, 0, 0))
-                                .strafeToConstantHeading(new Vector2d(0, -20)).build()
+                                .strafeToConstantHeading(new Vector2d(5, -15)).build()
                 ));
+                lift.intendOuttake();
                 visionPortal.close();
                 return false;
 
@@ -189,12 +189,20 @@ public class BlueCloseAutoVPortal extends LinearOpMode {
                 telemetry.addLine("NO APRIL TAG");
                 telemetry.update();
             }
+            double amounttt=0;
+            if(loc==Location.CENTER){
+                amounttt = 2.5;
+            }else if(loc==Location.RIGHT){
+                amounttt = 5;
+            }
                 drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
             Actions.runBlocking(new SequentialAction(
                     new LiftUp(),
                     drive.actionBuilder(new Pose2d(0, 0, 0))
-                            .strafeToConstantHeading(new Vector2d(0, -20)).build()
+                            .strafeToConstantHeading(new Vector2d(5, -12-amounttt)).build()
             ));
+            lift.intendOuttake();
+            visionPortal.close();
             return false;
         }
     }
@@ -226,17 +234,23 @@ public class BlueCloseAutoVPortal extends LinearOpMode {
             double pos = robot.liftMotor.getCurrentPosition();
             packet.put("liftPos", pos);
 
-            if (pos < 885) {
+            if (pos < 700) {
                 // true causes the action to rerun
                 return true;
             } else {
                 // false stops action rerun
                 robot.liftMotor.setPower(0);
-                lift.extend1Outtake();
-                sleep(1400);
+//                lift.extend2Outtake();
+                // extend outtake for auto
+                robot.upRight.setPosition(0.4);
+                robot.downLeft.setPosition(0.4);
+                robot.upLeft.setPosition(0.78);
+                sleep(1000);
                 lift.openOuttake();
 
-                sleep(2000);
+                sleep(500);
+
+//                robot.liftMotor.
                 return false;
             }
             // overall, the action powers the lift until it surpasses
@@ -298,6 +312,11 @@ public class BlueCloseAutoVPortal extends LinearOpMode {
         telemetry.addLine("STARTED");
         redClose(drive, loc);
 
+
+
+        telemetry.addLine("Autonomous ended");
+        telemetry.update();
+
     }
 
     private void redClose(MecanumDrive drive, Location loc) {
@@ -315,7 +334,7 @@ public class BlueCloseAutoVPortal extends LinearOpMode {
                         .strafeToConstantHeading(new Vector2d(8, 35.5))
                         .strafeToConstantHeading(new Vector2d(12, 35.5));
                 trajBackdrop = drive.actionBuilder(new Pose2d(12, 35.5, 0))
-                        .splineToSplineHeading(new Pose2d(37.8, 30, Math.PI), 0);
+                        .splineToSplineHeading(new Pose2d(37.8, 32, Math.PI), 0);
 
 //                        .strafeToConstantHeading(new Vector2d(14, 50))
 //                        .strafeToConstantHeading(new Vector2d(35, 50))
@@ -356,6 +375,7 @@ public class BlueCloseAutoVPortal extends LinearOpMode {
                 trajBackdrop.build(),
                 new AprilTagAlign()
         ));
+
         robot.kill();
     }
 

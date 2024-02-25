@@ -190,8 +190,9 @@ public class RedCloseAutoVPortal extends LinearOpMode {
                 Actions.runBlocking(new SequentialAction(
                         new LiftUp(),
                         drive.actionBuilder(new Pose2d(0, 0, 0))
-                                .strafeToConstantHeading(new Vector2d(4, -10)).build()
+                                .strafeToConstantHeading(new Vector2d(5, 15)).build()
                 ));
+                lift.intendOuttake();
                 visionPortal.close();
                 return false;
 
@@ -200,12 +201,20 @@ public class RedCloseAutoVPortal extends LinearOpMode {
                 telemetry.addLine("NO APRIL TAG");
                 telemetry.update();
             }
+            double amounttt=0;
+            if(loc==Location.CENTER){
+                amounttt = 2.5;
+            }else if(loc==Location.LEFT){
+                amounttt = 5;
+            }
             drive = new MecanumDrive(hardwareMap, new Pose2d(0, 0, 0));
+
             Actions.runBlocking(new SequentialAction(
                     new LiftUp(),
                     drive.actionBuilder(new Pose2d(0, 0, 0))
-                            .strafeToConstantHeading(new Vector2d(4, -10)).build()
+                            .strafeToConstantHeading(new Vector2d(5, 12+amounttt)).build()
             ));
+            lift.intendOuttake();
             return false;
         }
     }
@@ -237,17 +246,20 @@ public class RedCloseAutoVPortal extends LinearOpMode {
             double pos = robot.liftMotor.getCurrentPosition();
             packet.put("liftPos", pos);
 
-            if (pos < 1150) {
+            if (pos < 700) {
                 // true causes the action to rerun
                 return true;
             } else {
                 // false stops action rerun
                 robot.liftMotor.setPower(0);
-                lift.extend1Outtake();
-                sleep(1400);
+                // extend outtake for auto
+                robot.upRight.setPosition(0.4);
+                robot.downLeft.setPosition(0.4);
+                robot.upLeft.setPosition(0.78);
+                sleep(1000);
                 lift.openOuttake();
 
-                sleep(2000);
+                sleep(500);
                 return false;
             }
             // overall, the action powers the lift until it surpasses
